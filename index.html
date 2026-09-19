@@ -61,89 +61,83 @@ var rec=document.getElementById('record');if(rec)rec.onclick=function(){alert('R
 load();render();
 })();
 </script>
+
 <script type="module">
-(async function(){
+(async()=>{
 try{
 const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-const root=document.getElementById('root');
-const oldRender=window.render;
-function viko3D(){
- const box=document.createElement('div');box.className='card';box.innerHTML='<div class="h">🎬 Viko 3D Preview</div><div id="v3d" style="background:#05080e;border:1px solid #273449;border-radius:16px;overflow:hidden"><canvas style="display:block;width:100%;height:auto"></canvas></div><p class="muted">Procedural 3D Viko • realtime camera • basic walk/run/jump motion</p>';
- root.prepend(box);
- const canvas=box.querySelector('canvas'), short=true;
- canvas.width=short?540:720;canvas.height=short?720:405;
- const r=new THREE.WebGLRenderer({canvas,antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,2));r.setSize(canvas.width,canvas.height,false);
- const s=new THREE.Scene();s.background=new THREE.Color(0x172b49);
- const cam=new THREE.PerspectiveCamera(35,canvas.width/canvas.height,.1,100);cam.position.set(4,3,7);cam.lookAt(0,1.8,0);
- s.add(new THREE.HemisphereLight(0xd8edff,0x182033,2));
- const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(4,8,5);s.add(sun);
- const g=new THREE.Group();s.add(g);
- const mat=(x)=>new THREE.MeshStandardMaterial({color:x,roughness:.72});
- const add=(geo,m,p)=>{const q=new THREE.Mesh(geo,m);q.position.set(...p);g.add(q);return q};
- add(new THREE.CapsuleGeometry(.65,1.05,8,16),mat(0x5b6ee1),[0,1.65,0]);
- add(new THREE.SphereGeometry(.72,24,16),mat(0xf0b483),[0,3.05,0]).scale.set(1,1.05,.9);
- add(new THREE.SphereGeometry(.74,24,12),mat(0x30253e),[0,3.32,0]).scale.set(1,.55,.93);
- [-.25,.25].forEach(x=>add(new THREE.SphereGeometry(.075,12,8),mat(0x111111),[x,3.08,.68]));
- [-.35,.35].forEach(x=>{let a=add(new THREE.CapsuleGeometry(.13,.65,6,10),mat(0xf0b483),[x,1.72,0]);a.rotation.z=x>0?-0.35:0.35});
- [-.25,.25].forEach(x=>{add(new THREE.CapsuleGeometry(.17,.72,6,10),mat(0x26314d),[x,.7,0]);add(new THREE.SphereGeometry(.22,16,10),mat(0x111827),[x,.2,.18]).scale.set(1,.55,1.3)});
- const floor=new THREE.Mesh(new THREE.PlaneGeometry(16,16),mat(0x101927));floor.rotation.x=-Math.PI/2;s.add(floor);
- const clock=new THREE.Clock();
- function frame(){const t=clock.getElapsedTime();g.position.y=Math.abs(Math.sin(t*2.5))*.18;g.rotation.y=Math.sin(t*.7)*.15;r.render(s,cam);requestAnimationFrame(frame)} frame();
-}catch(e){console.error('3D preview',e);}
-})();
-</script><script type="module">
-(async function(){
-try{
-const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-let renderer,scene,camera,hero,nubi,worldGroup,raf=0,playing=false,rec=null,chunks=[];
-const mat=(x)=>new THREE.MeshStandardMaterial({color:x,roughness:.72});
-function add(g,geo,m,p){const q=new THREE.Mesh(geo,m);q.position.set(...p);g.add(q);return q}
-function makeViko(){
- const g=new THREE.Group(),skin=mat(0xf0b483),hair=mat(0x30253e),shirt=mat(0x5b6ee1),pants=mat(0x26314d),shoe=mat(0x111827),black=mat(0x111111);
- add(g,new THREE.CapsuleGeometry(.62,1.05,8,16),shirt,[0,1.65,0]);
- add(g,new THREE.SphereGeometry(.7,24,16),skin,[0,3.02,0]).scale.set(1,.98,.9);
- add(g,new THREE.SphereGeometry(.72,24,12),hair,[0,3.3,0]).scale.set(1,.52,.92);
- [-.24,.24].forEach(x=>add(g,new THREE.SphereGeometry(.07,12,8),black,[x,3.06,.67]));
- [-.34,.34].forEach(x=>{let a=add(g,new THREE.CapsuleGeometry(.13,.62,6,10),skin,[x,1.72,0]);a.rotation.z=x>0?-.35:.35;});
- [-.24,.24].forEach(x=>{add(g,new THREE.CapsuleGeometry(.17,.72,6,10),pants,[x,.7,0]);add(g,new THREE.SphereGeometry(.22,16,10),shoe,[x,.2,.18]).scale.set(1,.55,1.3);});
+let R,S,C,H,N,W,animId=0,playing=false;
+const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.62,metalness:.05});
+const mesh=(g,geo,ma,p)=>{const q=new THREE.Mesh(geo,ma);q.position.set(...p);g.add(q);return q};
+function Viko(){
+ const g=new THREE.Group(), skin=M(0xf2b88a), hair=M(0x2b2036), shirt=M(0x5b6ee1), pants=M(0x27334f), shoe=M(0x111827), white=M(0xffffff), eye=M(0x172033);
+ const body=mesh(g,new THREE.CapsuleGeometry(.64,1.02,10,20),shirt,[0,1.65,0]); body.scale.z=.72;
+ const head=mesh(g,new THREE.SphereGeometry(.72,32,24),skin,[0,3.02,0]); head.scale.set(1,.99,.9);
+ const haircap=mesh(g,new THREE.SphereGeometry(.75,32,18),hair,[0,3.30,0]); haircap.scale.set(1,.55,.94);
+ mesh(g,new THREE.BoxGeometry(.55,.12,.18),hair,[0,3.52,.2]);
+ [-.24,.24].forEach(x=>{mesh(g,new THREE.SphereGeometry(.075,16,12),white,[x,3.08,.66]);mesh(g,new THREE.SphereGeometry(.038,12,10),eye,[x,3.08,.72]);});
+ const smile=mesh(g,new THREE.TorusGeometry(.14,.025,8,20,Math.PI),M(0x8a4052),[0,2.82,.69]);smile.rotation.x=Math.PI;
+ [-.36,.36].forEach(x=>{const a=mesh(g,new THREE.CapsuleGeometry(.13,.62,8,12),skin,[x,1.72,0]);a.rotation.z=x>0?-.42:.42;});
+ [-.25,.25].forEach(x=>{mesh(g,new THREE.CapsuleGeometry(.18,.72,8,12),pants,[x,.7,0]);const sh=mesh(g,new THREE.SphereGeometry(.23,20,14),shoe,[x,.2,.2]);sh.scale.set(1,.55,1.35);});
+ const badge=mesh(g,new THREE.CylinderGeometry(.16,.16,.035,32),M(0x22d3ee),[0,2.05,.5]);badge.rotation.x=Math.PI/2;
  return g;
 }
-function makeNubi(){const g=new THREE.Group(),p=mat(0x7c5cff),d=mat(0x111827),c=mat(0x22d3ee);add(g,new THREE.SphereGeometry(.42,20,14),p,[0,0,0]).scale.set(1.3,.82,.75);[-.16,.16].forEach(x=>add(g,new THREE.SphereGeometry(.055,10,8),c,[x,.04,.38]));add(g,new THREE.CylinderGeometry(.025,.025,.22,8),d,[0,.47,0]);add(g,new THREE.SphereGeometry(.06,10,8),c,[0,.6,0]);g.position.set(1.5,2.8,0);return g;}
-function makeWorld(name){
- const g=new THREE.Group(), ground=add(g,new THREE.PlaneGeometry(18,18),mat(0x182334),[0,0,0]);ground.rotation.x=-Math.PI/2;
- if(name==='bedroom'){scene.background=new THREE.Color(0x263b62);const bed=add(g,new THREE.BoxGeometry(4,.75,2),mat(0x526895),[0,.4,-2.5]);add(g,new THREE.BoxGeometry(4,2,.2),mat(0x394b6c),[0,1.35,-3.4]);}
- if(name==='street'){scene.background=new THREE.Color(0x667785);add(g,new THREE.BoxGeometry(18,.06,5),mat(0x30343a),[0,.03,-1]);for(let x=-8;x<9;x+=2)add(g,new THREE.BoxGeometry(.9,.03,.08),mat(0xe5e7eb),[x,.08,-1]);}
- if(name==='kitchen'){scene.background=new THREE.Color(0x725b4b);add(g,new THREE.BoxGeometry(6,.8,1.1),mat(0x9a806b),[0,.8,-2.4]);add(g,new THREE.BoxGeometry(6,2.8,.18),mat(0x5d4c40),[0,2.1,-3]);}
- if(name==='park'){scene.background=new THREE.Color(0x477056);for(let x=-4;x<=4;x+=4){add(g,new THREE.CylinderGeometry(.12,.16,1.4,8),mat(0x684b36),[x,.7,-2]);add(g,new THREE.SphereGeometry(.8,14,10),mat(0x2f6840),[x,1.7,-2]);}}
+function Nubi(){
+ const g=new THREE.Group(),body=M(0x7c5cff),dark=M(0x101827),cyan=M(0x22d3ee),silver=M(0xdbeafe);
+ mesh(g,new THREE.SphereGeometry(.43,28,20),body,[0,0,0]).scale.set(1.35,.82,.8);
+ mesh(g,new THREE.SphereGeometry(.32,24,18),dark,[0,0,.33]).scale.set(1.1,.62,.25);
+ [-.14,.14].forEach(x=>mesh(g,new THREE.SphereGeometry(.055,12,10),cyan,[x,.03,.43]));
+ const stem=mesh(g,new THREE.CylinderGeometry(.025,.025,.2,10),silver,[0,.45,0]);
+ mesh(g,new THREE.SphereGeometry(.06,12,10),cyan,[0,.58,0]);
  return g;
 }
-const defaults=['bedroom','bedroom','street','kitchen','street','park'], actions=['jump','idle','walk','run','run','jump'];
-function getScenes(){try{const x=JSON.parse(localStorage.getItem('vikoStudio2'));return Array.isArray(x?.scenes)&&x.scenes.length?x.scenes:[]}catch(e){return[]}}
+function World(kind){
+ const g=new THREE.Group(), ground=M(0x172231);
+ const floor=mesh(g,new THREE.PlaneGeometry(20,20),ground,[0,0,0]);floor.rotation.x=-Math.PI/2;
+ if(kind==='bedroom'){S.background=new THREE.Color(0x22385b);mesh(g,new THREE.BoxGeometry(5,.65,2.2),M(0x566b98),[0,.38,-2.5]);mesh(g,new THREE.BoxGeometry(5,2.1,.18),M(0x3a4b6c),[0,1.35,-3.5]);mesh(g,new THREE.BoxGeometry(.9,1.8,.25),M(0xe5b87d),[-3,1,-3.2]);}
+ if(kind==='street'){S.background=new THREE.Color(0x71818b);mesh(g,new THREE.BoxGeometry(18,.08,5),M(0x30343a),[0,.04,-1]);for(let x=-8;x<9;x+=2)mesh(g,new THREE.BoxGeometry(.9,.035,.09),M(0xf3f4f6),[x,.09,-1]);}
+ if(kind==='kitchen'){S.background=new THREE.Color(0x715b4e);mesh(g,new THREE.BoxGeometry(7,.8,1.1),M(0x9a806b),[0,.8,-2.4]);mesh(g,new THREE.BoxGeometry(7,2.8,.2),M(0x5b493d),[0,2.1,-3]);mesh(g,new THREE.CylinderGeometry(.25,.25,.55,24),M(0xc8d2df),[1,1.5,-2.1]);}
+ if(kind==='park'){S.background=new THREE.Color(0x477456);for(let x=-6;x<=6;x+=3){mesh(g,new THREE.CylinderGeometry(.12,.18,1.4,10),M(0x684b36),[x,.7,-2.5]);mesh(g,new THREE.SphereGeometry(.82,20,14),M(0x2f6840),[x,1.7,-2.5]);}mesh(g,new THREE.BoxGeometry(4,.12,.7),M(0x8b5e3c),[0,1,-1]);}
+ return g;
+}
+const worlds=['bedroom','bedroom','street','kitchen','street','park'], acts=['jump','idle','walk','run','run','jump'];
+function scenes(){try{const x=JSON.parse(localStorage.getItem('vikoStudio2'));return Array.isArray(x?.scenes)?x.scenes:[]}catch(e){return[]}}
 function init(){
- const canvas=document.getElementById('viko3dCanvas');if(!canvas||renderer)return;
- const short=true;canvas.width=short?540:720;canvas.height=short?720:405;
- renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(canvas.width,canvas.height,false);
- scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(34,canvas.width/canvas.height,.1,100);camera.position.set(4.5,3.2,8);camera.lookAt(0,1.8,0);
- scene.add(new THREE.HemisphereLight(0xdceeff,0x162033,2.2));const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(4,8,5);scene.add(sun);
- hero=makeViko();nubi=makeNubi();scene.add(hero,nubi);worldGroup=makeWorld(defaults[0]);scene.add(worldGroup);
- const loop=()=>{if(!playing){const t=performance.now()/1000;hero.position.y=Math.abs(Math.sin(t*2))*.05;nubi.position.y=2.8+Math.sin(t*2.5)*.12;hero.rotation.y=Math.sin(t*.7)*.08;renderer.render(scene,camera)}raf=requestAnimationFrame(loop)};loop();
+ const cv=document.getElementById('viko3dCanvas');if(!cv||R)return;
+ cv.width=540;cv.height=720;
+ R=new THREE.WebGLRenderer({canvas:cv,antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(540,720,false);
+ S=new THREE.Scene();C=new THREE.PerspectiveCamera(32,540/720,.1,100);C.position.set(4.2,3.1,8);C.lookAt(0,1.8,0);
+ S.add(new THREE.HemisphereLight(0xeaf5ff,0x101827,2.5));
+ const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(4,8,6);S.add(key);
+ const rim=new THREE.DirectionalLight(0x9ab7ff,1.5);rim.position.set(-5,4,-4);S.add(rim);
+ H=Viko();N=Nubi();S.add(H,N);W=World('bedroom');S.add(W);
+ const loop=()=>{if(!playing){const t=performance.now()/1000;H.position.y=Math.abs(Math.sin(t*2))*.045;H.rotation.y=Math.sin(t*.65)*.06;N.position.set(1.5,2.85+Math.sin(t*2.4)*.12,.1);R.render(S,C);}animId=requestAnimationFrame(loop)};loop();
 }
-function setScene(i,t=0){
- const ss=getScenes(),s=ss[i]||{title:'Viko 3D',text:'Create an episode'};if(worldGroup)scene.remove(worldGroup);worldGroup=makeWorld(defaults[i]||'bedroom');scene.add(worldGroup);
- const a=actions[i]||'idle';hero.position.x=a==='walk'?Math.sin(t*2)*1.1:0;hero.position.y=a==='jump'?Math.abs(Math.sin(t*3))*1.1:0;hero.rotation.y=a==='run'?Math.sin(t*8)*.3:Math.sin(t*2)*.06;nubi.position.y=2.8+Math.sin(t*2.5)*.15;
- camera.position.x=4.5+Math.sin(t*.7)*.5;camera.position.z=a==='run'?7.2:8;camera.lookAt(0,1.8,0);renderer.render(scene,camera);
- const tx=document.getElementById('vikoSceneText');if(tx)tx.textContent='Scene '+(i+1)+' — '+s.title+' • '+s.text;
- const bar=document.getElementById('vikoProgress');if(bar)bar.style.width=(i/Math.max(1,ss.length)*100)+'%';
+function setScene(i,t){
+ if(!R)init(); if(W)S.remove(W);W=World(worlds[i]||'bedroom');S.add(W);
+ const a=acts[i]||'idle', speed=t*2;
+ H.position.x=a==='walk'?Math.sin(speed)*1.0:a==='run'?Math.sin(speed*1.7)*1.25:0;
+ H.position.y=a==='jump'?Math.abs(Math.sin(t*3))*1.0:Math.abs(Math.sin(t*3))*0.08;
+ H.rotation.y=a==='run'?Math.sin(t*8)*.25:Math.sin(t*2)*.06;
+ N.position.set(1.5,2.85+Math.sin(t*2.5)*.15,.1);
+ C.position.x=4.2+Math.sin(t*.7)*.45;C.position.z=a==='run'?7.2:8;C.lookAt(0,1.8,0);R.render(S,C);
+ const ss=scenes(), tx=document.getElementById('vikoSceneText'),bar=document.getElementById('vikoProgress');
+ if(tx)tx.textContent='Scene '+(i+1)+' — '+(ss[i]?.title||'Viko Challenge')+' • '+(ss[i]?.text||'');
+ if(bar)bar.style.width=((i+1)/Math.max(1,ss.length)*100)+'%';
 }
 function play(){
- const ss=getScenes();if(!ss.length){alert('पहले Story में Generate 6 Scenes दबाओ।');return}init();playing=true;const start=performance.now(),dur=4000,total=dur*ss.length;
- const step=now=>{if(!playing)return;const e=now-start;if(e>=total){playing=false;setScene(ss.length-1,0);return}const i=Math.floor(e/dur);setScene(i,(e%dur)/1000);raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step);
+ const ss=scenes();if(!ss.length){alert('पहले Story में Generate 6 Scenes दबाओ।');return}init();playing=true;const start=performance.now(),dur=4000,total=dur*ss.length;
+ const step=now=>{if(!playing)return;const e=now-start;if(e>=total){playing=false;setScene(ss.length-1,0);return}setScene(Math.floor(e/dur),(e%dur)/1000);animId=requestAnimationFrame(step)};animId=requestAnimationFrame(step);
 }
-function stop(){playing=false;if(raf)cancelAnimationFrame(raf);}
+function stop(){playing=false;if(animId)cancelAnimationFrame(animId);}
 function record(){
- const ss=getScenes();init();if(!renderer||!renderer.domElement.captureStream){alert('इस browser में recording supported नहीं है।');return}stop();const stream=renderer.domElement.captureStream(30);const type=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';rec=new MediaRecorder(stream,{mimeType:type});chunks=[];rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type}));a.download='viko-3d-episode.webm';a.click()};rec.start();const start=performance.now(),dur=4000,total=dur*ss.length;const step=now=>{const e=now-start;if(e>=total){rec.stop();return}setScene(Math.floor(e/dur),(e%dur)/1000);requestAnimationFrame(step)};requestAnimationFrame(step);
+ const ss=scenes();if(!ss.length){alert('पहले Story में Generate 6 Scenes दबाओ।');return}init();stop();if(!R.domElement.captureStream){alert('इस browser में recording supported नहीं है।');return}
+ const stream=R.domElement.captureStream(30),type=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm',chunks=[];
+ const mr=new MediaRecorder(stream,{mimeType:type});mr.ondataavailable=e=>e.data.size&&chunks.push(e.data);mr.onstop=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type}));a.download='viko-3d-episode.webm';a.click()};mr.start();
+ const start=performance.now(),dur=4000,total=dur*ss.length;const step=now=>{const e=now-start;if(e>=total){mr.stop();return}setScene(Math.floor(e/dur),(e%dur)/1000);requestAnimationFrame(step)};requestAnimationFrame(step);
 }
-const obs=new MutationObserver(()=>{if(document.getElementById('viko3dCanvas')){init();const p=document.getElementById('play'),st=document.getElementById('stop'),r=document.getElementById('record');if(p&&!p.dataset.bound){p.dataset.bound=1;p.onclick=play}if(st&&!st.dataset.bound){st.dataset.bound=1;st.onclick=stop}if(r&&!r.dataset.bound){r.dataset.bound=1;r.onclick=record}}});obs.observe(document.getElementById('root'),{childList:true,subtree:true});
-}catch(e){console.error('VIKO 3D',e)} })();
+const bind3d=()=>{const cv=document.getElementById('viko3dCanvas');if(!cv)return;init();[['play',play],['stop',stop],['record',record]].forEach(([id,fn])=>{const b=document.getElementById(id);if(b&&!b.dataset.v3d){b.dataset.v3d=1;b.onclick=fn;}})};
+new MutationObserver(bind3d).observe(document.getElementById('root'),{childList:true,subtree:true});bind3d();
+}catch(e){console.error('VIKO 3D engine',e)}})();
 </script></body>
 </html>
