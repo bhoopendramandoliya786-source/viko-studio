@@ -1,0 +1,10 @@
+{
+  "name":"VIKO Studio",
+  "short_name":"VIKO",
+  "start_url":".",
+  "display":"standalone",
+  "background_color":"#070b12",
+  "theme_color":"#090d14",
+  "lang":"hi",
+  "description":"Mobile-first cartoon story and animation studio for Viko World."
+}
