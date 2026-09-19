@@ -141,7 +141,7 @@ function makeViko(){const g=new THREE.Group();g.name='Viko';const torso=rbox(1.5
 function makeNubi(){const g=new THREE.Group();g.name='Nubi';const body=sphere(.68,0xf2f5f8);body.scale.set(1.12,.86,1);g.add(body);const face=rbox(.88,.5,.1,.16,0x07121e);face.position.z=.64;g.add(face);for(const sx of [-.21,.21]){const eye=sphere(.085,0x2deaff);eye.position.set(sx,.07,.71);g.add(eye)}const smile=new THREE.Mesh(new THREE.TorusGeometry(.15,.035,10,24,Math.PI),mat(0x2deaff));smile.position.set(0,-.09,.71);smile.rotation.x=Math.PI/2;g.add(smile);const ring=new THREE.Mesh(new THREE.TorusGeometry(.75,.075,18,36),mat(0x36bfff));ring.rotation.x=Math.PI/2;ring.position.y=-.05;g.add(ring);for(const sx of [-1,1]){const arm=cyl(.11,.55,0xdbe5ed);arm.position.set(sx*.68,-.05,0);arm.rotation.z=sx*.35;g.add(arm)}const antenna=cyl(.035,.28,0xb8c6d4);antenna.position.set(0,.72,0);g.add(antenna);const tip=sphere(.07,0x2deaff);tip.position.set(0,.88,0);g.add(tip);g.userData.body=body;return g}
 function makeWorld(type){
  const g=new THREE.Group();g.name=type;let ground=box(24,.25,18,0x6ba45b);ground.position.y=-.15;g.add(ground);
- const sky= new THREE.Color(type==='cave'?0x15172a:type==='sunset'?0xe48a67:0x75c9ef);
+ const sky= new THREE.Color(type==='cave'?0x15172a:type==='sunset'?0xe48a67:type==='home'?0x83c5e8:0x75c9ef);
  engine.scene.background=sky;
  if(type==='city'||type==='school'||type==='market'){
    for(let i=0;i<13;i++){let h=2.5+(i%4)*.8,b=box(1.5,h,1.3,[0xd9a37c,0x9d86c9,0xe6c56f,0x76a7bd][i%4]);b.position.set(-10+i*1.65,h/2-.2,-2-(i%3)*.7);g.add(b)}
@@ -150,15 +150,15 @@ function makeWorld(type){
  } else if(type==='home'){const house=box(5,3.1,2.5,0xe7d0b8);house.position.set(0,1.45,-2);g.add(house);const roof=box(5.7,.35,2.8,0xb05d49);roof.position.set(0,3.15,-2);roof.rotation.z=.02;g.add(roof);const door=box(1,.15,1.8,0x704a38);door.position.set(0,.8,-3.3);g.add(door)}
  else if(type==='park'||type==='river'||type==='sunset'){for(let i=0;i<11;i++){const trunk=cyl(.12,1.4,0x66452f);trunk.position.set(-10+i*2, .7, -2-(i%3));g.add(trunk);const leaf=sphere(.9,0x2f8a4b);leaf.position.set(-10+i*2,1.65,-2-(i%3));g.add(leaf)}}
  else if(type==='cave'){ground.material=mat(0x29253b);const rock=sphere(5,0x252039);rock.scale.set(1,.65,.7);rock.position.set(0,2,-4);g.add(rock);for(let i=0;i<8;i++){const l=sphere(.12,0x32dfff);l.position.set(-5+i*1.4,.8,-3);g.add(l)}}
- return g;
+ addCinematicDecor(g,type); return g;
 }
 function initStage(){
  const canvas=document.getElementById('stage');if(!canvas)return;
  if(engine){cancelAnimationFrame(raf);engine.renderer.dispose();engine=null}
- const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(38,16/9,.1,100);camera.position.set(7,4.4,10);camera.lookAt(0,1.9,0);
+ const scene=new THREE.Scene();scene.fog=new THREE.Fog(0x78b8d0,18,42);const camera=new THREE.PerspectiveCamera(35,16/9,.1,100);camera.position.set(7,4.4,10);camera.lookAt(0,1.9,0);
  let renderer;
  try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});}
- catch(err){console.error(err);document.getElementById('root').insertAdjacentHTML('afterbegin','<div class="card" style="margin:12px;color:#ffd9d9"><b>WebGL शुरू नहीं हो पाया।</b><br>Chrome में hardware acceleration/WebGL चालू करके page reload करो.</div>');return;}renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(1280,720,false);renderer.shadowMap.enabled=true;
+ catch(err){console.error(err);document.getElementById('root').insertAdjacentHTML('afterbegin','<div class="card" style="margin:12px;color:#ffd9d9"><b>WebGL शुरू नहीं हो पाया।</b><br>Chrome में hardware acceleration/WebGL चालू करके page reload करो.</div>');return;}renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(1280,720,false);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
  scene.add(new THREE.HemisphereLight(0xeaf8ff,0x47627a,2.5));const sun=new THREE.DirectionalLight(0xfff2d2,3.2);sun.position.set(6,10,7);sun.castShadow=true;scene.add(sun);const rim=new THREE.DirectionalLight(0x7fdcff,1.5);rim.position.set(-7,5,-6);scene.add(rim);
  const v=makeViko(),n=makeNubi();v.position.set(-1.1,0,0);n.position.set(1.2,2.1,0);scene.add(v,n);v.traverse(o=>{if(o.isMesh)o.castShadow=true});n.traverse(o=>{if(o.isMesh)o.castShadow=true});
  const subPlane=new THREE.Mesh(new THREE.PlaneGeometry(10.5,1.05),new THREE.MeshBasicMaterial({transparent:true}));subPlane.position.set(0,-2.55,0);subPlane.visible=false;scene.add(subPlane);
