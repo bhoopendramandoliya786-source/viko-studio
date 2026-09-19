@@ -70,7 +70,7 @@ const oldRender=window.render;
 function viko3D(){
  const box=document.createElement('div');box.className='card';box.innerHTML='<div class="h">🎬 Viko 3D Preview</div><div id="v3d" style="background:#05080e;border:1px solid #273449;border-radius:16px;overflow:hidden"><canvas style="display:block;width:100%;height:auto"></canvas></div><p class="muted">Procedural 3D Viko • realtime camera • basic walk/run/jump motion</p>';
  root.prepend(box);
- const canvas=box.querySelector('canvas'), short=state.settings?.format!=='long';
+ const canvas=box.querySelector('canvas'), short=true;
  canvas.width=short?540:720;canvas.height=short?720:405;
  const r=new THREE.WebGLRenderer({canvas,antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,2));r.setSize(canvas.width,canvas.height,false);
  const s=new THREE.Scene();s.background=new THREE.Color(0x172b49);
