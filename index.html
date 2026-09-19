@@ -1,7 +1,14 @@
 <!doctype html>
 <html lang="hi">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
 <title>VIKO Studio — Cinematic Episode Engine</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#06121f;color:#f7fbff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}.app{max-width:1180px;margin:auto}.top{position:sticky;top:0;z-index:20;background:#071625f7;border-bottom:1px solid #29415b;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}.brand{font-size:18px;font-weight:1000}.brand span{color:#29d9ed}.nav{position:sticky;top:52px;z-index:19;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;background:#081726f5;padding:7px}.nav button,.btn{border:0;border-radius:10px;background:#172b40;color:#fff;padding:10px;font-weight:850}.nav .on,.primary{background:#6b52f5}.page{padding:12px}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px}.card{background:#0b1a2a;border:1px solid #284057;border-radius:17px;padding:13px;margin-bottom:12px}.h{font-size:20px;font-weight:950;margin-bottom:7px}.muted{color:#afc0d2;line-height:1.5}.field{margin:9px 0}.field label{display:block;font-size:12px;color:#bcd0e2;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;padding:10px;border:1px solid #304961;border-radius:10px;background:#071421;color:#fff}.field textarea{min-height:90px}.actions{display:flex;gap:7px;flex-wrap:wrap}.wide{width:100%}.stage{position:relative;background:#000;border-radius:16px;overflow:hidden}.stage canvas{display:block;width:100%;height:auto}.subtitle{position:absolute;left:5%;right:5%;bottom:7%;text-align:center;font-size:clamp(15px,2.4vw,27px);font-weight:850;text-shadow:0 3px 8px #000;background:#0009;border-radius:12px;padding:7px 12px}.badge{position:absolute;top:3%;right:3%;background:#142b56e8;border-radius:99px;padding:7px 14px;font-weight:950}.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.stat div{background:#081624;border:1px solid #263c53;border-radius:10px;text-align:center;padding:8px}.stat b{display:block;font-size:18px}.small{font-size:12px;color:#8fa5ba}.scene{padding:9px;border:1px solid #263d55;background:#081624;border-radius:11px;margin:6px 0}.scene.on{border-color:#765dff;background:#101b37}.bar{height:8px;background:#05101a;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#29d9ed}.notice{background:#10283e;border-radius:11px;padding:10px;color:#cbd9e6;font-size:13px}.footer{text-align:center;color:#72879c;font-size:12px;padding:18px}@media(max-width:780px){.grid{grid-template-columns:1fr}.stat{grid-template-columns:repeat(2,1fr)}.nav button{font-size:10px;padding:9px 2px}}
@@ -12,8 +19,8 @@
 <nav class="nav"><button data-p="factory">Factory</button><button data-p="character">Character</button><button data-p="episode">Episode</button><button data-p="video">🎬 Video</button><button data-p="export">Export</button></nav>
 <main id="root"></main><div class="footer">Original Viko World • cinematic production pipeline</div></div>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const KEY='vikoCinematicV3',SCENE_SEC=30,SCENES=40;
 const places=['city','home','school','park','market','river','cave','sunset'];
@@ -175,7 +182,9 @@ function initStage(){
  const canvas=document.getElementById('stage');if(!canvas)return;
  if(engine){cancelAnimationFrame(raf);engine.renderer.dispose();engine=null}
  const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(38,16/9,.1,100);camera.position.set(7,4.4,10);camera.lookAt(0,1.9,0);
- const renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(1280,720,false);renderer.shadowMap.enabled=true;
+ let renderer;
+ try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});}
+ catch(err){console.error(err);document.getElementById('root').insertAdjacentHTML('afterbegin','<div class="card" style="margin:12px;color:#ffd9d9"><b>WebGL शुरू नहीं हो पाया।</b><br>Chrome में hardware acceleration/WebGL चालू करके page reload करो.</div>');return;}renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(1280,720,false);renderer.shadowMap.enabled=true;
  scene.add(new THREE.HemisphereLight(0xeaf8ff,0x47627a,2.5));const sun=new THREE.DirectionalLight(0xfff2d2,3.2);sun.position.set(6,10,7);sun.castShadow=true;scene.add(sun);const rim=new THREE.DirectionalLight(0x7fdcff,1.5);rim.position.set(-7,5,-6);scene.add(rim);
  const v=makeViko(),n=makeNubi();v.position.set(-1.1,0,0);n.position.set(1.2,2.1,0);scene.add(v,n);v.traverse(o=>{if(o.isMesh)o.castShadow=true});n.traverse(o=>{if(o.isMesh)o.castShadow=true});
  const subPlane=new THREE.Mesh(new THREE.PlaneGeometry(10.5,1.05),new THREE.MeshBasicMaterial({transparent:true}));subPlane.position.set(0,-2.55,0);subPlane.visible=false;scene.add(subPlane);
