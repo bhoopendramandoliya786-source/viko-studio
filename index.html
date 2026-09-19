@@ -199,14 +199,29 @@ function animate3d(){if(!engine)return;const now=performance.now(),dt=Math.min(.
  else {v.rotation.y=Math.sin(engine.time*.5)*.08;if(sc.action==='walk'||sc.action==='run'){v.position.x=-1.1+Math.sin(engine.time*(sc.action==='run'?2.5:1.3))*.35;v.userData.parts['arm-1'].rotation.x=Math.sin(engine.time*6)*.45;v.userData.parts.arm1.rotation.x=-Math.sin(engine.time*6)*.45}else if(sc.action==='jump'){v.position.y=Math.abs(Math.sin(engine.time*3))*1.0}else v.position.y=0}
  if(realN){n.position.y=2+Math.sin(engine.time*2.2)*.12;n.rotation.y=Math.sin(engine.time)*.18;playAssetAnimation(assets.nubi,'idle')}else{n.position.y=2.1+Math.sin(engine.time*2.4)*.12;n.rotation.y=Math.sin(engine.time)*.25}
  const shot=active%5;const tgt=[[0,1.9,0],[-.5,1.8,0],[.8,2.1,0],[0,2.5,0],[0,1.35,0]][shot];engine.camera.position.set(6.8+Math.sin(engine.time*.16)*1.5,tgt[1]+2.0,9.5+Math.cos(engine.time*.13)*.8);engine.camera.lookAt(...tgt);
- engine.renderer.render(engine.scene,engine.camera);raf=requestAnimationFrame(animate3d)}
+ engine.renderer.render(engine.scene,engine.camera);drawProductionOverlay();raf=requestAnimationFrame(animate3d)}
 function setScene(i){active=Math.max(0,Math.min(current().scenes.length-1,i));setWorld();const x=current().scenes[active];const sub=document.getElementById('sub');if(sub)sub.textContent=x.text;const st=document.getElementById('status');if(st)st.textContent='Scene '+(active+1)+' / 40 • '+placeName(x.place)+' • '+x.action}
+function drawProductionOverlay(){
+ if(!engine)return;
+ const ctx=engine.renderer.domElement.getContext('2d');
+ if(!ctx)return;
+ const W=engine.renderer.domElement.width,H=engine.renderer.domElement.height;
+ const e=current(),x=e.scenes[active]||e.scenes[0]||{};
+ ctx.save();
+ ctx.fillStyle='rgba(0,0,0,.28)';ctx.fillRect(0,H-150,W,150);
+ ctx.fillStyle='#102b62';roundRect(ctx,W-245,28,205,62,30);ctx.fillStyle='#fff';ctx.font='800 28px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Episode '+e.id,W-142,59);
+ ctx.textAlign='left';ctx.font='900 38px system-ui';ctx.fillStyle='#ffd34f';ctx.strokeStyle='#0b58c9';ctx.lineWidth=8;ctx.strokeText('VIKO',45,65);ctx.fillText('VIKO',45,65);
+ ctx.font='900 18px system-ui';ctx.fillStyle='#fff';ctx.fillText('NEW JOURNEY',48,91);
+ ctx.fillStyle='rgba(0,0,0,.72)';roundRect(ctx,80,H-112,W-160,72,18);ctx.fillStyle='#fff';ctx.font='700 25px system-ui';ctx.textAlign='center';
+ let txt=String(x.text||'').replace(/\s+/g,' ').trim();if(txt.length>105)txt=txt.slice(0,102)+'…';ctx.fillText(txt,W/2,H-76);
+ ctx.restore();
+}
 function play(start,count){stop();playing=true;const e=current(),end=Math.min(e.scenes.length,start+count),startAt=performance.now(),dur=e.scenes.slice(start,end).reduce((a,x)=>a+(x.duration||30),0)*1000;function tick(now){if(!playing)return;const elapsed=now-startAt;let acc=0,i=start;while(i<end&&elapsed>=acc+(e.scenes[i].duration||30)*1000){acc+=(e.scenes[i].duration||30)*1000;i++}if(i>=end){playing=false;setScene(end-1);return}if(i!==active)setScene(i);const meter=document.getElementById('meter');if(meter)meter.style.width=Math.min(100,elapsed/dur*100)+'%';requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 function stop(){playing=false;if(rec&&rec.state!=='inactive')rec.stop();if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
 async function record(withMic){
  if(!engine||!engine.renderer?.domElement?.captureStream){alert('इस browser में video capture उपलब्ध नहीं है।');return}
  stop();const canvas=engine.renderer.domElement;const stream=canvas.captureStream(30);
  if(withMic){try{micStream=await navigator.mediaDevices.getUserMedia({audio:true});micStream.getAudioTracks().forEach(t=>stream.addTrack(t))}catch{alert('Microphone permission नहीं मिली।');return}}
- const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';recChunks=[];rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000,audioBitsPerSecond:128000});rec.ondataavailable=e=>e.data.size&&recChunks.push(e.data);rec.onstop=()=>{download('viko-episode-'+current().id+'.webm',new Blob(recChunks,{type:mime}),mime);if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}};rec.start(1000);play(0,40);const total=40*SCENE_SEC*1000;setTimeout(()=>{if(rec&&rec.state!=='inactive'){playing=false;rec.stop()}},total+1000)}
+ const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';recChunks=[];rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000,audioBitsPerSecond:128000});rec.ondataavailable=e=>e.data.size&&recChunks.push(e.data);rec.onstop=()=>{download('viko-episode-'+current().id+'.webm',new Blob(recChunks,{type:mime}),mime);if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}};rec.start(1000);play(0,40);const total=current().scenes.slice(0,40).reduce((a,x)=>a+(x.duration||SCENE_SEC),0)*1000;setTimeout(()=>{if(rec&&rec.state!=='inactive'){playing=false;rec.stop()}},total+1200)}
 load();if(!s.library.length){s.library=[makeEpisode(1)];s.scenes=s.library[0].scenes}render();
 </script></body></html>
