@@ -13,6 +13,7 @@
 <main id="root"></main><div class="footer">Original Viko World • cinematic production pipeline</div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js';
 
 const KEY='vikoCinematicV3',SCENE_SEC=30,SCENES=40;
 const places=['city','home','school','park','market','river','cave','sunset'];
@@ -22,6 +23,8 @@ const hooks=['रहस्यमयी signal','secret box','अजीब map','
 const goals=['mystery solve करना','Nubi को ढूँढना','secret जगह तक पहुँचना','challenge पूरा करना','City को बचाना','clue का सच पता करना'];
 const D={page:'factory',episodeNo:1,name:'Viko',companion:'Nubi',library:[],scenes:[]};
 let s={...D},active=0,playing=false,raf=0,rec=null,recChunks=[],micStream=null,engine=null;
+const assets={viko:null,nubi:null,bgUrl:null};
+const gltfLoader=new GLTFLoader();
 
 const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const save=()=>localStorage.setItem(KEY,JSON.stringify(s));
@@ -49,6 +52,9 @@ function bind(){
  document.getElementById('save').onclick=()=>{save();document.getElementById('save').textContent='Saved ✓';setTimeout(()=>document.getElementById('save').textContent='Save',800)};
  const b=document.getElementById('build');if(b)b.onclick=()=>build(+document.getElementById('count').value);
  const cs=document.getElementById('cs');if(cs)cs.onclick=()=>{s.name=document.getElementById('name').value||'Viko';s.companion=document.getElementById('comp').value||'Nubi';save();render()};
+ const vf=document.getElementById('vikoFile');if(vf)vf.onchange=()=>loadGLB(vf.files[0],'viko');
+ const nf=document.getElementById('nubiFile');if(nf)nf.onchange=()=>loadGLB(nf.files[0],'nubi');
+ const bf=document.getElementById('bgFile');if(bf)bf.onchange=()=>loadBG(bf.files[0]);
  const le=document.getElementById('loadEp');if(le)le.onclick=()=>{s.episodeNo=Math.max(1,+document.getElementById('ep').value||1);if(!s.library.length)s.library=[makeEpisode(s.episodeNo)];if(!s.library[s.episodeNo-1])s.library.push(makeEpisode(s.episodeNo));s.scenes=s.library[s.episodeNo-1].scenes;active=0;save();render()};
  document.querySelectorAll('[data-i]').forEach(z=>z.onclick=()=>{active=+z.dataset.i;render()});
  const ap=document.getElementById('apply');if(ap)ap.onclick=()=>{let x=current().scenes[active];x.title=document.getElementById('st').value;x.text=document.getElementById('tx').value;x.place=document.getElementById('pl').value;x.action=document.getElementById('ac').value;save();render()};
@@ -63,6 +69,58 @@ function bind(){
 }
 
 function download(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+async function loadGLB(file,key){
+ if(!file)return;
+ const url=URL.createObjectURL(file);
+ try{
+  const gltf=await gltfLoader.loadAsync(url);
+  assets[key]={root:gltf.scene,animations:gltf.animations||[],mixer:gltf.animations?.length?new THREE.AnimationMixer(gltf.scene):null,clip:null,url};
+  gltf.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  if(engine)attachAssets();
+  alert((key==='viko'?'Viko':'Nubi')+' PRO asset loaded ✓');
+ }catch(e){console.error(e);alert('GLB/GLTF load नहीं हुआ। GLB format try करो।')}
+}
+function loadBG(file){
+ if(!file)return;
+ if(assets.bgUrl)URL.revokeObjectURL(assets.bgUrl);
+ assets.bgUrl=URL.createObjectURL(file);
+ if(engine)applyBG();
+ alert('Cinematic background loaded ✓');
+}
+function attachAssets(){
+ if(!engine)return;
+ if(assets.viko?.root){
+  engine.scene.remove(engine.v);
+  engine.v=assets.viko.root;
+  engine.v.position.set(-1.25,0,0);
+  engine.v.scale.setScalar(1.55);
+  engine.scene.add(engine.v);
+ }
+ if(assets.nubi?.root){
+  engine.scene.remove(engine.n);
+  engine.n=assets.nubi.root;
+  engine.n.position.set(1.15,1.9,0);
+  engine.n.scale.setScalar(1);
+  engine.scene.add(engine.n);
+ }
+}
+function playAssetAnimation(asset,name){
+ if(!asset?.mixer||!asset.animations?.length)return;
+ const wanted=name.toLowerCase();
+ const clip=asset.animations.find(a=>a.name.toLowerCase().includes(wanted))||asset.animations.find(a=>a.name.toLowerCase().includes('idle'))||asset.animations[0];
+ if(asset.clip===clip)return;
+ asset.mixer.stopAllAction();
+ asset.clip=clip;
+ asset.mixer.clipAction(clip).reset().fadeIn(.2).play();
+}
+function applyBG(){
+ if(!engine)return;
+ if(engine.bgMesh){engine.scene.remove(engine.bgMesh);engine.bgMesh.material.map?.dispose();engine.bgMesh.material.dispose();engine.bgMesh=null}
+ if(!assets.bgUrl)return;
+ const tex=new THREE.TextureLoader().load(assets.bgUrl);
+ tex.colorSpace=THREE.SRGBColorSpace;
+ engine.scene.background=tex;
+}
 function makeTextTexture(text){const c=document.createElement('canvas');c.width=1024;c.height=180;const x=c.getContext('2d');x.clearRect(0,0,1024,180);x.fillStyle='#000b';roundRect(x,20,35,984,110,22);x.fillStyle='#fff';x.font='bold 42px system-ui';x.textAlign='center';x.textBaseline='middle';let t=text.length>70?text.slice(0,67)+'…':text;x.fillText(t,512,90);return new THREE.CanvasTexture(c)}
 function roundRect(x,a,b,w,h,r){x.beginPath();x.roundRect(a,b,w,h,r);x.fill()}
 function mat(c,rough=.8){return new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:.05})}
@@ -107,10 +165,19 @@ function initStage(){
  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(1280,720,false);renderer.shadowMap.enabled=true;
  scene.add(new THREE.HemisphereLight(0xffffff,0x6688aa,2.2));const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(6,10,7);sun.castShadow=true;scene.add(sun);
  const v=makeViko(),n=makeNubi();v.position.set(-1.1,0,0);n.position.set(1.2,2.1,0);scene.add(v,n);v.traverse(o=>{if(o.isMesh)o.castShadow=true});n.traverse(o=>{if(o.isMesh)o.castShadow=true});
- engine={scene,camera,renderer,v,n,world:null,last:performance.now(),time:0};setWorld();animate3d();
+ const subPlane=new THREE.Mesh(new THREE.PlaneGeometry(10.5,1.05),new THREE.MeshBasicMaterial({transparent:true}));subPlane.position.set(0,-2.55,0);subPlane.visible=false;scene.add(subPlane);
+ engine={scene,camera,renderer,v,n,subPlane,world:null,last:performance.now(),time:0,bgMesh:null};
+ attachAssets();applyBG();setWorld();animate3d();
 }
-function setWorld(){if(!engine)return;let e=current(),sc=e.scenes[active]||e.scenes[0]||{place:'city',action:'idle'};if(engine.world)engine.scene.remove(engine.world);engine.world=makeWorld(sc.place);engine.scene.add(engine.world)}
-function animate3d(){if(!engine)return;const now=performance.now(),dt=Math.min(.05,(now-engine.last)/1000);engine.last=now;engine.time+=dt;const e=current(),sc=e.scenes[active]||e.scenes[0]||{action:'idle'};const v=engine.v,n=engine.n;v.rotation.y=Math.sin(engine.time*.5)*.08;if(sc.action==='walk'||sc.action==='run'){v.position.x=-1.1+Math.sin(engine.time*(sc.action==='run'?2.5:1.3))*.35;v.userData.parts['arm-1'].rotation.x=Math.sin(engine.time*6)*.45;v.userData.parts.arm1.rotation.x=-Math.sin(engine.time*6)*.45}else if(sc.action==='jump'){v.position.y=Math.abs(Math.sin(engine.time*3))*1.0}else{v.position.y=0}n.position.y=2.1+Math.sin(engine.time*2.4)*.12;n.rotation.y=Math.sin(engine.time)*.25;engine.camera.position.x=7+Math.sin(engine.time*.18)*1.5;engine.camera.position.z=10+Math.cos(engine.time*.15)*.7;engine.camera.lookAt(0,1.9,0);engine.renderer.render(engine.scene,engine.camera);raf=requestAnimationFrame(animate3d)}
+function setWorld(){if(!engine)return;let e=current(),sc=e.scenes[active]||e.scenes[0]||{place:'city',action:'idle'};if(engine.world)engine.scene.remove(engine.world);engine.world=makeWorld(sc.place);engine.scene.add(engine.world);if(assets.bgUrl)applyBG()}
+function animate3d(){if(!engine)return;const now=performance.now(),dt=Math.min(.05,(now-engine.last)/1000);engine.last=now;engine.time+=dt;const e=current(),sc=e.scenes[active]||e.scenes[0]||{action:'idle'};const v=engine.v,n=engine.n;
+ if(assets.viko?.mixer)assets.viko.mixer.update(dt);if(assets.nubi?.mixer)assets.nubi.mixer.update(dt);
+ const realV=!!assets.viko?.root,realN=!!assets.nubi?.root;
+ if(realV){v.rotation.y=Math.sin(engine.time*.35)*.05;v.position.x=-1.25+(sc.action==='run'?Math.sin(engine.time*2.5)*.35:sc.action==='walk'?Math.sin(engine.time*1.3)*.2:0);v.position.y=sc.action==='jump'?Math.abs(Math.sin(engine.time*3))*.7:0;playAssetAnimation(assets.viko,sc.action==='run'?'run':sc.action==='walk'?'walk':sc.action==='jump'?'jump':'idle')}
+ else {v.rotation.y=Math.sin(engine.time*.5)*.08;if(sc.action==='walk'||sc.action==='run'){v.position.x=-1.1+Math.sin(engine.time*(sc.action==='run'?2.5:1.3))*.35;v.userData.parts['arm-1'].rotation.x=Math.sin(engine.time*6)*.45;v.userData.parts.arm1.rotation.x=-Math.sin(engine.time*6)*.45}else if(sc.action==='jump'){v.position.y=Math.abs(Math.sin(engine.time*3))*1.0}else v.position.y=0}
+ if(realN){n.position.y=2+Math.sin(engine.time*2.2)*.12;n.rotation.y=Math.sin(engine.time)*.18;playAssetAnimation(assets.nubi,'idle')}else{n.position.y=2.1+Math.sin(engine.time*2.4)*.12;n.rotation.y=Math.sin(engine.time)*.25}
+ const shot=active%5;const tgt=[[0,1.9,0],[-.5,1.8,0],[.8,2.1,0],[0,2.5,0],[0,1.35,0]][shot];engine.camera.position.set(6.8+Math.sin(engine.time*.16)*1.5,tgt[1]+2.0,9.5+Math.cos(engine.time*.13)*.8);engine.camera.lookAt(...tgt);
+ engine.renderer.render(engine.scene,engine.camera);raf=requestAnimationFrame(animate3d)}
 function setScene(i){active=Math.max(0,Math.min(current().scenes.length-1,i));setWorld();const x=current().scenes[active];const sub=document.getElementById('sub');if(sub)sub.textContent=x.text;const st=document.getElementById('status');if(st)st.textContent='Scene '+(active+1)+' / 40 • '+placeName(x.place)+' • '+x.action}
 function play(start,count){stop();playing=true;const e=current(),end=Math.min(e.scenes.length,start+count),startAt=performance.now(),dur=e.scenes.slice(start,end).reduce((a,x)=>a+(x.duration||30),0)*1000;function tick(now){if(!playing)return;const elapsed=now-startAt;let acc=0,i=start;while(i<end&&elapsed>=acc+(e.scenes[i].duration||30)*1000){acc+=(e.scenes[i].duration||30)*1000;i++}if(i>=end){playing=false;setScene(end-1);return}if(i!==active)setScene(i);const meter=document.getElementById('meter');if(meter)meter.style.width=Math.min(100,elapsed/dur*100)+'%';requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 function stop(){playing=false;if(rec&&rec.state!=='inactive')rec.stop();if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
