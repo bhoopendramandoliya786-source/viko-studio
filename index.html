@@ -37,7 +37,7 @@ function story(){var html='<section class="page"><div class="card"><div class="h
 
 function makeScenes(){state.scenes=[['HOOK','आज Viko ने सबसे मुश्किल challenge चुना!'],['SETUP','Nubi rules समझाता है और challenge शुरू होता है।'],['START','Viko पहला बड़ा step लेता है।'],['TWIST','अचानक एक funny problem आ जाती है।'],['CLIMAX','Viko हार नहीं मानता और आखिरी कोशिश करता है।'],['PAYOFF','Challenge पूरा! Viko को एक life lesson मिलता है।']].map(function(x){return {title:x[0],text:x[1]};});save();render();}
 
-function animate(){return '<section class="page"><div class="card"><div class="h">Animation Studio</div><p class="muted">यहाँ तुम्हारे scenes का preview आएगा।</p><div class="preview" style="height:520px">'+(state.scenes.length?preview():'<div class="muted">पहले Story में scenes बनाओ।</div>')+'</div><div class="actions" style="margin-top:12px"><button class="btn primary" id="play">▶ Play Preview</button><button class="btn" id="record">● Record</button></div></div></section>';}
+function animate(){return '<section class="page"><div class="card"><div class="h">🎬 VIKO 3D Animation Studio</div><p class="muted">यहाँ Viko का realtime 3D episode preview, camera और scene actions चलेंगे।</p><div style="background:#05080e;border:1px solid #273449;border-radius:16px;overflow:hidden"><canvas id="viko3dCanvas" width="540" height="720" style="display:block;width:100%;height:auto"></canvas></div><div class="progress" style="height:7px;background:#08101b;border-radius:99px;overflow:hidden;margin-top:9px"><i id="vikoProgress" style="display:block;width:0;height:100%;background:linear-gradient(90deg,#7c5cff,#22d3ee)"></i></div><p id="vikoSceneText" class="muted">3D engine तैयार हो रहा है…</p><div class="actions" style="margin-top:10px"><button class="btn primary" id="play">▶ Play 3D Episode</button><button class="btn" id="stop">■ Stop</button><button class="btn" id="record">● Record</button></div></div><div class="card"><div class="h">Scene Timeline</div>'+(state.scenes.length?state.scenes.map(function(s,i){return '<div class="scene"><b>Scene '+(i+1)+' — '+esc(s.title)+'</b><p class="muted">'+esc(s.text)+'</p><span class="badge">'+['Bedroom','Bedroom','Street','Kitchen','Street','Park'][i]+'</span><span class="badge">'+['Jump','Idle','Walk','Run','Run','Jump'][i]+'</span></div>';}).join(''):'<p class="muted">पहले Story में Generate 6 Scenes दबाओ।</p>')+'</div></section>';}
 
 function exportPage(){return '<section class="page"><div class="card"><div class="h">Export Center</div><p class="muted">Project में '+state.scenes.length+' scenes हैं।</p><div class="actions"><button class="btn primary" id="download">Download Project JSON</button><button class="btn" id="toAnimate">Open Animation</button></div></div></section>';}
 
@@ -91,5 +91,59 @@ function viko3D(){
  function frame(){const t=clock.getElapsedTime();g.position.y=Math.abs(Math.sin(t*2.5))*.18;g.rotation.y=Math.sin(t*.7)*.15;r.render(s,cam);requestAnimationFrame(frame)} frame();
 }catch(e){console.error('3D preview',e);}
 })();
+</script><script type="module">
+(async function(){
+try{
+const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
+let renderer,scene,camera,hero,nubi,worldGroup,raf=0,playing=false,rec=null,chunks=[];
+const mat=(x)=>new THREE.MeshStandardMaterial({color:x,roughness:.72});
+function add(g,geo,m,p){const q=new THREE.Mesh(geo,m);q.position.set(...p);g.add(q);return q}
+function makeViko(){
+ const g=new THREE.Group(),skin=mat(0xf0b483),hair=mat(0x30253e),shirt=mat(0x5b6ee1),pants=mat(0x26314d),shoe=mat(0x111827),black=mat(0x111111);
+ add(g,new THREE.CapsuleGeometry(.62,1.05,8,16),shirt,[0,1.65,0]);
+ add(g,new THREE.SphereGeometry(.7,24,16),skin,[0,3.02,0]).scale.set(1,.98,.9);
+ add(g,new THREE.SphereGeometry(.72,24,12),hair,[0,3.3,0]).scale.set(1,.52,.92);
+ [-.24,.24].forEach(x=>add(g,new THREE.SphereGeometry(.07,12,8),black,[x,3.06,.67]));
+ [-.34,.34].forEach(x=>{let a=add(g,new THREE.CapsuleGeometry(.13,.62,6,10),skin,[x,1.72,0]);a.rotation.z=x>0?-.35:.35;});
+ [-.24,.24].forEach(x=>{add(g,new THREE.CapsuleGeometry(.17,.72,6,10),pants,[x,.7,0]);add(g,new THREE.SphereGeometry(.22,16,10),shoe,[x,.2,.18]).scale.set(1,.55,1.3);});
+ return g;
+}
+function makeNubi(){const g=new THREE.Group(),p=mat(0x7c5cff),d=mat(0x111827),c=mat(0x22d3ee);add(g,new THREE.SphereGeometry(.42,20,14),p,[0,0,0]).scale.set(1.3,.82,.75);[-.16,.16].forEach(x=>add(g,new THREE.SphereGeometry(.055,10,8),c,[x,.04,.38]));add(g,new THREE.CylinderGeometry(.025,.025,.22,8),d,[0,.47,0]);add(g,new THREE.SphereGeometry(.06,10,8),c,[0,.6,0]);g.position.set(1.5,2.8,0);return g;}
+function makeWorld(name){
+ const g=new THREE.Group(), ground=add(g,new THREE.PlaneGeometry(18,18),mat(0x182334),[0,0,0]);ground.rotation.x=-Math.PI/2;
+ if(name==='bedroom'){scene.background=new THREE.Color(0x263b62);const bed=add(g,new THREE.BoxGeometry(4,.75,2),mat(0x526895),[0,.4,-2.5]);add(g,new THREE.BoxGeometry(4,2,.2),mat(0x394b6c),[0,1.35,-3.4]);}
+ if(name==='street'){scene.background=new THREE.Color(0x667785);add(g,new THREE.BoxGeometry(18,.06,5),mat(0x30343a),[0,.03,-1]);for(let x=-8;x<9;x+=2)add(g,new THREE.BoxGeometry(.9,.03,.08),mat(0xe5e7eb),[x,.08,-1]);}
+ if(name==='kitchen'){scene.background=new THREE.Color(0x725b4b);add(g,new THREE.BoxGeometry(6,.8,1.1),mat(0x9a806b),[0,.8,-2.4]);add(g,new THREE.BoxGeometry(6,2.8,.18),mat(0x5d4c40),[0,2.1,-3]);}
+ if(name==='park'){scene.background=new THREE.Color(0x477056);for(let x=-4;x<=4;x+=4){add(g,new THREE.CylinderGeometry(.12,.16,1.4,8),mat(0x684b36),[x,.7,-2]);add(g,new THREE.SphereGeometry(.8,14,10),mat(0x2f6840),[x,1.7,-2]);}}
+ return g;
+}
+const defaults=['bedroom','bedroom','street','kitchen','street','park'], actions=['jump','idle','walk','run','run','jump'];
+function getScenes(){try{const x=JSON.parse(localStorage.getItem('vikoStudio2'));return Array.isArray(x?.scenes)&&x.scenes.length?x.scenes:[]}catch(e){return[]}}
+function init(){
+ const canvas=document.getElementById('viko3dCanvas');if(!canvas||renderer)return;
+ const short=true;canvas.width=short?540:720;canvas.height=short?720:405;
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(canvas.width,canvas.height,false);
+ scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(34,canvas.width/canvas.height,.1,100);camera.position.set(4.5,3.2,8);camera.lookAt(0,1.8,0);
+ scene.add(new THREE.HemisphereLight(0xdceeff,0x162033,2.2));const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(4,8,5);scene.add(sun);
+ hero=makeViko();nubi=makeNubi();scene.add(hero,nubi);worldGroup=makeWorld(defaults[0]);scene.add(worldGroup);
+ const loop=()=>{if(!playing){const t=performance.now()/1000;hero.position.y=Math.abs(Math.sin(t*2))*.05;nubi.position.y=2.8+Math.sin(t*2.5)*.12;hero.rotation.y=Math.sin(t*.7)*.08;renderer.render(scene,camera)}raf=requestAnimationFrame(loop)};loop();
+}
+function setScene(i,t=0){
+ const ss=getScenes(),s=ss[i]||{title:'Viko 3D',text:'Create an episode'};if(worldGroup)scene.remove(worldGroup);worldGroup=makeWorld(defaults[i]||'bedroom');scene.add(worldGroup);
+ const a=actions[i]||'idle';hero.position.x=a==='walk'?Math.sin(t*2)*1.1:0;hero.position.y=a==='jump'?Math.abs(Math.sin(t*3))*1.1:0;hero.rotation.y=a==='run'?Math.sin(t*8)*.3:Math.sin(t*2)*.06;nubi.position.y=2.8+Math.sin(t*2.5)*.15;
+ camera.position.x=4.5+Math.sin(t*.7)*.5;camera.position.z=a==='run'?7.2:8;camera.lookAt(0,1.8,0);renderer.render(scene,camera);
+ const tx=document.getElementById('vikoSceneText');if(tx)tx.textContent='Scene '+(i+1)+' — '+s.title+' • '+s.text;
+ const bar=document.getElementById('vikoProgress');if(bar)bar.style.width=(i/Math.max(1,ss.length)*100)+'%';
+}
+function play(){
+ const ss=getScenes();if(!ss.length){alert('पहले Story में Generate 6 Scenes दबाओ।');return}init();playing=true;const start=performance.now(),dur=4000,total=dur*ss.length;
+ const step=now=>{if(!playing)return;const e=now-start;if(e>=total){playing=false;setScene(ss.length-1,0);return}const i=Math.floor(e/dur);setScene(i,(e%dur)/1000);raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step);
+}
+function stop(){playing=false;if(raf)cancelAnimationFrame(raf);}
+function record(){
+ const ss=getScenes();init();if(!renderer||!renderer.domElement.captureStream){alert('इस browser में recording supported नहीं है।');return}stop();const stream=renderer.domElement.captureStream(30);const type=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';rec=new MediaRecorder(stream,{mimeType:type});chunks=[];rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type}));a.download='viko-3d-episode.webm';a.click()};rec.start();const start=performance.now(),dur=4000,total=dur*ss.length;const step=now=>{const e=now-start;if(e>=total){rec.stop();return}setScene(Math.floor(e/dur),(e%dur)/1000);requestAnimationFrame(step)};requestAnimationFrame(step);
+}
+const obs=new MutationObserver(()=>{if(document.getElementById('viko3dCanvas')){init();const p=document.getElementById('play'),st=document.getElementById('stop'),r=document.getElementById('record');if(p&&!p.dataset.bound){p.dataset.bound=1;p.onclick=play}if(st&&!st.dataset.bound){st.dataset.bound=1;st.onclick=stop}if(r&&!r.dataset.bound){r.dataset.bound=1;r.onclick=record}}});obs.observe(document.getElementById('root'),{childList:true,subtree:true});
+}catch(e){console.error('VIKO 3D',e)} })();
 </script></body>
 </html>
