@@ -196,41 +196,39 @@ function play(start,count){stop();playing=true;const e=current(),end=Math.min(e.
 function stop(){playing=false;if(rec&&rec.state!=='inactive')rec.stop();if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
 async function recordRange(start,count,name){
  const st=document.getElementById('status');
- if(!engine?.captureCanvas?.captureStream||typeof MediaRecorder==='undefined'){if(st)st.textContent='❌ इस browser में video recording support नहीं है।';return}
+ if(!engine?.renderer?.domElement?.captureStream||typeof MediaRecorder==='undefined'){if(st)st.textContent='❌ इस browser में WebGL video recording support नहीं है।';return}
  stop();
- const canvas=engine.captureCanvas,stream=canvas.captureStream(30);
- const types=['video/webm;codecs=vp8,opus','video/webm','video/mp4'];
+ // Use the real, visible WebGL canvas. Some Android browsers produce zero frames
+ // when captureStream is called on an off-screen canvas.
+ const source=engine.renderer.domElement;
+ const stream=source.captureStream(30);
+ const types=['video/webm;codecs=vp8','video/webm'];
  let mime=types.find(x=>MediaRecorder.isTypeSupported(x));
- if(!mime){if(st)st.textContent='❌ कोई supported video format नहीं मिला। Chrome update करके फिर try करो।';return}
- try{
-  recChunks=[];
-  rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000});
- }catch(e){
-  if(st)st.textContent='❌ Recorder शुरू नहीं हुआ: '+(e.message||'browser error');
-  return;
- }
- rec.onerror=e=>{if(st)st.textContent='❌ Video recording error आया। फिर से Short दबाओ।';console.error(e)};
+ if(!mime){if(st)st.textContent='❌ Chrome ने supported video format नहीं दिया। Chrome update करके फिर try करो।';return}
+ try{recChunks=[];rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000})}
+ catch(e){if(st)st.textContent='❌ Recorder शुरू नहीं हुआ: '+(e.message||'browser error');return}
+ rec.onerror=()=>{if(st)st.textContent='❌ Recording error आया।';};
  rec.ondataavailable=e=>{if(e.data&&e.data.size)recChunks.push(e.data)};
  rec.onstop=()=>{
-  if(!recChunks.length){if(st)st.textContent='❌ Video में कोई frames नहीं मिले।';return}
+  if(!recChunks.length){if(st)st.textContent='❌ Browser ने video frames नहीं दिए। Chrome में page reload करके फिर try करो।';return}
   const blob=new Blob(recChunks,{type:mime});
-  const ext=mime.startsWith('video/mp4')?'mp4':'webm';
-  download(name+'.'+ext,blob,mime);
+  download(name+'.webm',blob,mime);
   if(st)st.textContent='✅ Video तैयार है — Download शुरू हो गया';
  };
  const e=current(),end=Math.min(e.scenes.length,start+count);
  const total=e.scenes.slice(start,end).reduce((a,x)=>a+(x.duration||SCENE_SEC),0)*1000;
- if(st)st.textContent='🔴 Recording… 0%';
  rec.start(250);
  setScene(start);
  play(start,count);
  const started=performance.now();
  const watcher=setInterval(()=>{
   if(!rec||rec.state==='inactive'){clearInterval(watcher);return}
-  const pct=Math.min(100,((performance.now()-started)/total)*100);
-  if(st)st.textContent='🔴 Recording… '+Math.round(pct)+'%';
+  if(st)st.textContent='🔴 Recording… '+Math.round(Math.min(100,((performance.now()-started)/total)*100))+'%';
  },500);
- setTimeout(()=>{clearInterval(watcher);if(rec&&rec.state!=='inactive'){playing=false;rec.requestData?.();setTimeout(()=>{if(rec&&rec.state!=='inactive')rec.stop()},300)}},total+500);
+ setTimeout(()=>{
+  clearInterval(watcher);
+  if(rec&&rec.state!=='inactive'){playing=false;rec.requestData?.();setTimeout(()=>{if(rec&&rec.state!=='inactive')rec.stop()},400)}
+ },total+600);
 }
 async function record(withMic){
  if(!engine?.captureCanvas?.captureStream){alert('इस browser में video capture उपलब्ध नहीं है।');return}
