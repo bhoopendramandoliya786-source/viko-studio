@@ -2,142 +2,97 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090d14">
-<title>VIKO Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>VIKO Studio — New Journey</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#070b12;color:#f4f7fb;font-family:system-ui,sans-serif}.app{max-width:1000px;margin:auto;padding-bottom:80px}.top{position:sticky;top:0;z-index:5;padding:14px 16px;background:#0b111c;border-bottom:1px solid #263246;display:flex;justify-content:space-between}.brand{font-weight:900;letter-spacing:2px}.brand span{color:#22d3ee}.nav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;background:#0b111c;position:sticky;top:52px;z-index:4}.nav button,.btn{border:0;border-radius:10px;padding:11px 7px;background:#182235;color:#fff}.nav .on,.primary{background:#7c5cff}.page{padding:14px}.card{background:#111a29;border:1px solid #29364b;border-radius:16px;padding:16px;margin-bottom:14px}.h{font-size:20px;font-weight:850;margin-bottom:8px}.muted{color:#aab6c8;line-height:1.5}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.preview{height:390px;display:grid;place-items:center;border-radius:18px;background:radial-gradient(circle at 50% 22%,#38578b 0,#172c4d 38%,#07101e 78%);overflow:hidden;position:relative}.preview:after{content:'';position:absolute;bottom:-50px;width:80%;height:100px;border-radius:50%;background:#050a12;opacity:.75}.vikoSvg{width:min(78%,330px);height:auto;position:relative;z-index:2;filter:drop-shadow(0 18px 14px #0008)}.nubiSvg{position:absolute;width:92px;right:8%;top:26%;z-index:3;filter:drop-shadow(0 10px 8px #0007);animation:float 1.8s ease-in-out infinite}@keyframes float{50%{transform:translateY(-10px) rotate(2deg)}}.field{margin:12px 0}.field label{display:block;margin-bottom:6px;color:#cbd5e1;font-size:13px}.field input,.field textarea,.field select{width:100%;padding:11px;border-radius:10px;border:1px solid #29364b;background:#090f19;color:#fff}.field textarea{min-height:100px}.scene{padding:12px;margin:8px 0;border:1px solid #29364b;border-radius:10px;background:#0c1421}.actions{display:flex;gap:8px;flex-wrap:wrap}.badge{display:inline-block;padding:6px 9px;border-radius:99px;background:#202c40;margin:3px;font-size:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}.nav button{font-size:12px}}
+*{box-sizing:border-box}body{margin:0;background:#07111f;color:#f7fbff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}.app{max-width:1100px;margin:auto;padding-bottom:80px}.top{position:sticky;top:0;z-index:20;background:#091522ee;backdrop-filter:blur(12px);padding:12px 14px;border-bottom:1px solid #24344a;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:1000;letter-spacing:1.5px;font-size:18px}.brand span{color:#27d8ee}.nav{position:sticky;top:53px;z-index:19;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px;background:#091522f2;border-bottom:1px solid #1d2b3d}.nav button,.btn{border:0;border-radius:11px;padding:11px 9px;background:#18263a;color:#fff;font-weight:750}.nav .on,.primary{background:#6d55ff}.page{padding:14px}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.card{background:#0f1b2b;border:1px solid #263850;border-radius:18px;padding:15px;margin-bottom:14px;box-shadow:0 12px 35px #0003}.h{font-size:20px;font-weight:900;margin-bottom:8px}.muted{color:#aebbd0;line-height:1.5}.field{margin:10px 0}.field label{display:block;color:#c9d5e6;font-size:13px;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;background:#08121f;border:1px solid #2b3b53;color:#fff;border-radius:11px;padding:11px;outline:none}.field textarea{min-height:90px;resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap}.badge{display:inline-block;background:#1b2a40;padding:5px 9px;border-radius:99px;font-size:12px;margin:3px}.hero{border-radius:18px;overflow:hidden;background:linear-gradient(#438fd5,#a9ddff 55%,#6ba75a);position:relative;min-height:410px}.hero canvas{display:block;width:100%;height:auto}.scene-list{display:grid;gap:9px}.scene{border:1px solid #293a52;background:#0a1524;border-radius:13px;padding:11px}.scene.active{border-color:#7c66ff;box-shadow:0 0 0 1px #7c66ff55}.scene-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.small{font-size:12px;color:#9eacc0}.timeline{display:flex;gap:5px;overflow:auto;padding:4px 0 8px}.timeline button{min-width:82px;border:1px solid #2b3b53;background:#101d2f;color:#fff;border-radius:10px;padding:8px}.timeline button.on{background:#6d55ff}.meter{height:7px;background:#07101c;border-radius:99px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6d55ff,#27d8ee)}.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat div{background:#0a1524;border:1px solid #263850;border-radius:12px;padding:10px;text-align:center}.stat b{font-size:18px;display:block}.notice{padding:10px 12px;border-radius:12px;background:#13253b;color:#c9d8eb;font-size:13px}.footer{color:#7f90a7;font-size:12px;text-align:center;padding:20px}.danger{background:#38202a!important}.wide{width:100%}@media(max-width:760px){.grid{grid-template-columns:1fr}.nav button{font-size:11px;padding:10px 4px}.hero{min-height:0}.stat{grid-template-columns:1fr 1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="brand">VIKO <span>STUDIO</span></div><button class="btn primary" id="save">Save</button></header>
-<nav class="nav">
-<button data-page="studio">Studio</button><button data-page="character">Character</button><button data-page="story">Story</button><button data-page="animate">Animate</button><button data-page="export">Export</button>
-</nav>
-<main id="root"></main>
+<header class="top"><div class="brand">VIKO <span>NEW JOURNEY</span></div><button id="save" class="btn primary">Save</button></header>
+<nav class="nav"><button data-page="studio">Studio</button><button data-page="character">Character</button><button data-page="story">Episode</button><button data-page="animate">3D Play</button><button data-page="export">Export</button></nav>
+<main id="root"></main><div class="footer">Viko World • Original cartoon universe • Mobile-first creator studio</div>
 </div>
 <script>
-(function(){
-'use strict';
-var state={page:'studio',name:'Viko',personality:'Curious, funny, brave',title:'Viko Challenge',idea:'हर दिन एक नया challenge',scenes:[]};
-
-function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function load(){try{var x=JSON.parse(localStorage.getItem('vikoStudio2'));if(x&&typeof x==='object'){if(x.page)state.page=x.page;if(x.name)state.name=x.name;if(x.personality)state.personality=x.personality;if(x.title)state.title=x.title;if(x.idea)state.idea=x.idea;if(Array.isArray(x.scenes))state.scenes=x.scenes;}}catch(e){}}
-function save(){try{localStorage.setItem('vikoStudio2',JSON.stringify(state));}catch(e){}}
-function go(p){state.page=p;render();}
-function preview(){return '<div class="preview"><svg class="vikoSvg" viewBox="0 0 360 430" role="img" aria-label="Viko cartoon character"><defs><linearGradient id="shirt" x1="0" x2="1"><stop offset="0" stop-color="#5b6ee1"/><stop offset="1" stop-color="#7c5cff"/></linearGradient><linearGradient id="skin" x1="0" x2="0" y2="1"><stop stop-color="#ffd2a8"/><stop offset="1" stop-color="#e9a875"/></linearGradient></defs><ellipse cx="180" cy="395" rx="100" ry="17" fill="#000" opacity=".3"/><path d="M126 316 Q180 295 234 316 L248 382 Q180 405 112 382Z" fill="#26314d" stroke="#151a25" stroke-width="6"/><rect x="108" y="205" width="144" height="142" rx="43" fill="url(#shirt)" stroke="#151a25" stroke-width="7"/><path d="M112 245 Q75 270 69 318" fill="none" stroke="#f0b783" stroke-width="24" stroke-linecap="round"/><path d="M248 245 Q285 270 291 318" fill="none" stroke="#f0b783" stroke-width="24" stroke-linecap="round"/><circle cx="69" cy="320" r="13" fill="#f0b783" stroke="#151a25" stroke-width="5"/><circle cx="291" cy="320" r="13" fill="#f0b783" stroke="#151a25" stroke-width="5"/><rect x="132" y="333" width="36" height="63" rx="15" fill="#26314d"/><rect x="192" y="333" width="36" height="63" rx="15" fill="#26314d"/><ellipse cx="180" cy="145" rx="91" ry="91" fill="url(#skin)" stroke="#151a25" stroke-width="7"/><path d="M93 140 Q90 53 178 49 Q270 48 267 135 Q244 111 224 116 Q196 77 160 105 Q130 123 93 140Z" fill="#30253e" stroke="#151a25" stroke-width="7" stroke-linejoin="round"/><path d="M112 108 Q132 65 169 69" fill="none" stroke="#59456e" stroke-width="10" stroke-linecap="round"/><ellipse cx="145" cy="151" rx="10" ry="15" fill="#111827"/><ellipse cx="215" cy="151" rx="10" ry="15" fill="#111827"/><circle cx="141" cy="146" r="3" fill="#fff"/><circle cx="211" cy="146" r="3" fill="#fff"/><path d="M166 173 Q180 183 194 173" fill="none" stroke="#8b3d50" stroke-width="7" stroke-linecap="round"/><circle cx="118" cy="181" r="10" fill="#f28d91" opacity=".3"/><circle cx="242" cy="181" r="10" fill="#f28d91" opacity=".3"/><path d="M143 250 Q180 268 217 250" fill="none" stroke="#9aa9ff" stroke-width="6" opacity=".8"/><circle cx="180" cy="235" r="6" fill="#fff" opacity=".9"/></svg><svg class="nubiSvg" viewBox="0 0 120 100" aria-label="Nubi robot"><ellipse cx="60" cy="88" rx="38" ry="7" fill="#000" opacity=".25"/><rect x="16" y="20" width="88" height="60" rx="22" fill="#7c5cff" stroke="#dbeafe" stroke-width="5"/><rect x="29" y="34" width="62" height="31" rx="13" fill="#111827"/><circle cx="47" cy="50" r="6" fill="#22d3ee"/><circle cx="73" cy="50" r="6" fill="#22d3ee"/><path d="M60 20 V8" stroke="#dbeafe" stroke-width="5"/><circle cx="60" cy="6" r="6" fill="#22d3ee"/><path d="M16 48 H7 M104 48 H113" stroke="#dbeafe" stroke-width="5" stroke-linecap="round"/></svg></div>';}
-
-function studio(){return '<section class="page"><div class="grid"><div>'+preview()+'</div><div><div class="card"><div class="h">Viko World</div><p class="muted">तुम्हारा अपना cartoon production workspace.</p><span class="badge">Funny Challenges</span><span class="badge">Life Lessons</span><span class="badge">Big Challenges</span></div><div class="card"><div class="h">One-Tap Episode</div><button class="btn primary" id="create">⚡ Create Episode</button><p class="muted">एक click में 6 scenes तैयार होंगे।</p></div><div class="card"><div class="h">Status</div><p class="muted">Scenes: '+state.scenes.length+'<br>Project: Local</p></div></div></div></section>';}
-
-function character(){return '<section class="page"><div class="grid"><div>'+preview()+'</div><div class="card"><div class="h">Character</div><div class="field"><label>Name</label><input id="name" value="'+esc(state.name)+'"></div><div class="field"><label>Personality</label><textarea id="personality">'+esc(state.personality)+'</textarea></div><button class="btn primary" id="charSave">Update Character</button></div></div></section>';}
-
-function story(){var html='<section class="page"><div class="card"><div class="h">Story Builder</div><div class="field"><label>Title</label><input id="title" value="'+esc(state.title)+'"></div><div class="field"><label>Story idea</label><textarea id="idea">'+esc(state.idea)+'</textarea></div><button class="btn primary" id="generate">Generate 6 Scenes</button></div><div class="card"><div class="h">Scenes</div>';if(!state.scenes.length){html+='<p class="muted">अभी scenes नहीं हैं। Generate दबाओ।</p>';}else{for(var i=0;i<state.scenes.length;i++){html+='<div class="scene"><b>Scene '+(i+1)+': '+esc(state.scenes[i].title)+'</b><p class="muted">'+esc(state.scenes[i].text)+'</p></div>';}}html+='</div></section>';return html;}
-
-function makeScenes(){state.scenes=[['HOOK','आज Viko ने सबसे मुश्किल challenge चुना!'],['SETUP','Nubi rules समझाता है और challenge शुरू होता है।'],['START','Viko पहला बड़ा step लेता है।'],['TWIST','अचानक एक funny problem आ जाती है।'],['CLIMAX','Viko हार नहीं मानता और आखिरी कोशिश करता है।'],['PAYOFF','Challenge पूरा! Viko को एक life lesson मिलता है।']].map(function(x){return {title:x[0],text:x[1]};});save();render();}
-
-function animate(){return '<section class="page"><div class="card"><div class="h">🎬 VIKO 3D Animation Studio</div><p class="muted">यहाँ Viko का realtime 3D episode preview, camera और scene actions चलेंगे।</p><div style="background:#05080e;border:1px solid #273449;border-radius:16px;overflow:hidden"><canvas id="viko3dCanvas" width="540" height="720" style="display:block;width:100%;height:auto"></canvas></div><div class="progress" style="height:7px;background:#08101b;border-radius:99px;overflow:hidden;margin-top:9px"><i id="vikoProgress" style="display:block;width:0;height:100%;background:linear-gradient(90deg,#7c5cff,#22d3ee)"></i></div><p id="vikoSceneText" class="muted">3D engine तैयार हो रहा है…</p><div class="actions" style="margin-top:10px"><button class="btn primary" id="play">▶ Play 3D Episode</button><button class="btn" id="stop">■ Stop</button><button class="btn" id="record">● Record</button></div></div><div class="card"><div class="h">Scene Timeline</div>'+(state.scenes.length?state.scenes.map(function(s,i){return '<div class="scene"><b>Scene '+(i+1)+' — '+esc(s.title)+'</b><p class="muted">'+esc(s.text)+'</p><span class="badge">'+['Bedroom','Bedroom','Street','Kitchen','Street','Park'][i]+'</span><span class="badge">'+['Jump','Idle','Walk','Run','Run','Jump'][i]+'</span></div>';}).join(''):'<p class="muted">पहले Story में Generate 6 Scenes दबाओ।</p>')+'</div></section>';}
-
-function exportPage(){return '<section class="page"><div class="card"><div class="h">Export Center</div><p class="muted">Project में '+state.scenes.length+' scenes हैं।</p><div class="actions"><button class="btn primary" id="download">Download Project JSON</button><button class="btn" id="toAnimate">Open Animation</button></div></div></section>';}
-
-function render(){
-var root=document.getElementById('root');if(!root)return;
-document.querySelectorAll('.nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-page')===state.page);});
-if(state.page==='studio')root.innerHTML=studio();else if(state.page==='character')root.innerHTML=character();else if(state.page==='story')root.innerHTML=story();else if(state.page==='animate')root.innerHTML=animate();else root.innerHTML=exportPage();
-bind();
+(()=>{'use strict';
+const KEY='vikoStudio2';
+const defaults={page:'studio',name:'Viko',personality:'Curious, funny, brave — हार नहीं मानता',title:'Viko New Journey: The Mystery in Viko City',idea:'आज Viko और Nubi को शहर के park में एक mysterious glowing signal मिलता है।',scenes:[]};
+let state={...defaults,scenes:[]},active=0,recording=false;
+const worlds=['City','Home','School','Park','Secret Cave','City Sunset'];
+const places=['street','bedroom','school','park','cave','park'];
+const actions=['walk','idle','walk','run','jump','idle'];
+const emotions=['excited','happy','surprised','worried','brave','happy'];
+function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&typeof x==='object'){state={...defaults,...x,scenes:Array.isArray(x.scenes)?x.scenes:[]}}}catch(e){state={...defaults,scenes:[]}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function go(p){state.page=p;save();render()}
+function makeEpisode(){
+ state.title='Viko New Journey: The Mystery in Viko City';
+ state.idea='Viko और Nubi को park में एक glowing signal मिलता है और दोनों mystery solve करने निकलते हैं।';
+ state.scenes=[
+ {title:'OPENING',text:'Viko City में एक नया दिन शुरू होता है। Viko अपनी नई journey के लिए तैयार है।',place:'street',action:'walk',emotion:'excited',duration:6},
+ {title:'HOME',text:'Nubi एक strange signal पकड़ता है। Viko को लगता है आज कुछ बड़ा होने वाला है।',place:'bedroom',action:'idle',emotion:'happy',duration:6},
+ {title:'SCHOOL',text:'School के रास्ते में signal फिर आता है। Viko और Nubi clue follow करते हैं।',place:'school',action:'walk',emotion:'surprised',duration:7},
+ {title:'PARK',text:'Park में उन्हें जमीन पर glowing निशान मिलता है। Mystery और गहरी हो जाती है।',place:'park',action:'run',emotion:'worried',duration:7},
+ {title:'CLIMAX',text:'Secret cave के अंदर Viko डरता है, फिर हिम्मत करके आखिरी clue solve करता है।',place:'cave',action:'jump',emotion:'brave',duration:8},
+ {title:'ENDING',text:'Mystery solve होती है। Viko और Nubi sunset में अगली journey की तैयारी करते हैं।',place:'park',action:'idle',emotion:'happy',duration:6}
+ ];
+ active=0;save();go('animate');
 }
+function studio(){return '<section class="page"><div class="grid"><div class="card"><div class="hero"><canvas id="heroCanvas" width="700" height="520"></canvas></div></div><div><div class="card"><div class="h">🎬 पूरा Cartoon Episode</div><p class="muted">Viko New Journey में एक ही challenge को अलग-अलग locations, camera shots और scenes में पूरा episode बनाया जाएगा।</p><button class="btn primary wide" id="create">⚡ Create New Episode</button></div><div class="card"><div class="stat"><div><b>'+state.scenes.length+'</b><span class="small">Scenes</span></div><div><b>'+state.scenes.reduce((a,s)=>a+(+s.duration||0),0)+'s</b><span class="small">Runtime</span></div><div><b>9:16</b><span class="small">Mobile</span></div></div></div><div class="card"><div class="h">Visual Direction</div><div class="notice">Colorful 3D cartoon-show presentation • original Viko World • expressive characters • cinematic camera • consistent locations.</div></div></div></div></section>'}
+function character(){return '<section class="page"><div class="grid"><div class="card"><div class="hero"><canvas id="charCanvas" width="700" height="520"></canvas></div></div><div class="card"><div class="h">Viko Character</div><div class="field"><label>Name</label><input id="name" value="'+esc(state.name)+'"></div><div class="field"><label>Personality</label><textarea id="personality">'+esc(state.personality)+'</textarea></div><button class="btn primary" id="charSave">Update Character</button><p class="muted">Nubi Viko का floating robot companion है। दोनों की design हर scene में consistent रहेगी।</p></div></div></section>'}
+function story(){let h='<section class="page"><div class="card"><div class="h">📝 Episode Builder</div><div class="field"><label>Episode Title</label><input id="title" value="'+esc(state.title)+'"></div><div class="field"><label>Story Idea</label><textarea id="idea">'+esc(state.idea)+'</textarea></div><div class="actions"><button class="btn primary" id="generate">Generate 6-Scene Episode</button><button class="btn" id="newBlank">Blank Episode</button></div></div><div class="card"><div class="h">Scene Timeline</div><div class="timeline">'+state.scenes.map((s,i)=>'<button class="'+(i===active?'on':'')+'" data-scene="'+i+'">'+(i+1)+'. '+esc(s.title)+'</button>').join('')+'</div>';
+if(!state.scenes.length)h+='<p class="muted">Generate दबाकर पूरा episode बनाओ।</p>';else{const s=state.scenes[active]||state.scenes[0];h+='<div class="grid"><div><div class="field"><label>Scene Title</label><input id="stitle" value="'+esc(s.title)+'"></div><div class="field"><label>Dialogue / Narration</label><textarea id="stext">'+esc(s.text)+'</textarea></div><div class="field"><label>Location</label><select id="splace">'+places.map(p=>'<option '+(p===s.place?'selected':'')+'>'+p+'</option>').join('')+'</select></div></div><div><div class="field"><label>Action</label><select id="saction">'+['idle','walk','run','jump'].map(p=>'<option '+(p===s.action?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label>Emotion</label><select id="semotion">'+emotions.map(p=>'<option '+(p===s.emotion?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label>Duration (seconds)</label><input id="sdur" type="number" min="2" max="30" value="'+esc(s.duration||6)+'"></div></div></div><div class="actions"><button class="btn primary" id="applyScene">Apply Scene</button><button class="btn danger" id="deleteScene">Delete Scene</button></div>'}h+='</div></section>';return h}
+function animate(){return '<section class="page"><div class="card"><div class="h">🎥 3D Cartoon Episode Player</div><div class="hero"><canvas id="viko3dCanvas" width="540" height="720"></canvas></div><div class="meter"><i id="progress"></i></div><p id="sceneText" class="muted">Episode तैयार करो।</p><div class="actions"><button class="btn primary" id="play">▶ Play Full Episode</button><button class="btn" id="stop">■ Stop</button><button class="btn" id="record">● Record</button></div></div><div class="card"><div class="h">Episode Scenes</div>'+state.scenes.map((s,i)=>'<div class="scene '+(i===active?'active':'')+'" data-jump="'+i+'"><div class="scene-head"><b>'+(i+1)+'. '+esc(s.title)+'</b><span class="small">'+esc(s.duration||6)+' sec</span></div><p class="muted">'+esc(s.text)+'</p><span class="badge">'+esc(s.place)+'</span><span class="badge">'+esc(s.action)+'</span><span class="badge">'+esc(s.emotion)+'</span></div>').join('')+'</div></section>'}
+function exportPage(){return '<section class="page"><div class="card"><div class="h">📦 Export Center</div><p class="muted">Episode project को JSON में save कर सकते हो। 3D player से WebM recording भी मिलेगी।</p><div class="actions"><button class="btn primary" id="download">Download Project</button><button class="btn" id="playExport">Open 3D Player</button></div></div><div class="card"><div class="h">Production Plan</div><p class="muted">Long episode: '+state.scenes.length+' scenes • Shorts: हर scene से अलग clip • Voice: browser speech preview • Final edit: voice + music + captions जोड़कर publish.</p></div></section>'}
+function render(){const r=document.getElementById('root');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.page===state.page));r.innerHTML=state.page==='studio'?studio():state.page==='character'?character():state.page==='story'?story():state.page==='animate'?animate():exportPage();bind();if(state.page==='studio')drawHero('heroCanvas');if(state.page==='character')drawHero('charCanvas')}
 function bind(){
-document.querySelectorAll('.nav button').forEach(function(b){b.onclick=function(){go(b.getAttribute('data-page'));};});
-var saveBtn=document.getElementById('save');if(saveBtn)saveBtn.onclick=function(){save();saveBtn.textContent='Saved ✓';setTimeout(function(){saveBtn.textContent='Save';},1200);};
-var create=document.getElementById('create');if(create)create.onclick=function(){makeScenes();go('animate');};
-var gen=document.getElementById('generate');if(gen)gen.onclick=function(){state.title=document.getElementById('title').value;state.idea=document.getElementById('idea').value;makeScenes();};
-var cs=document.getElementById('charSave');if(cs)cs.onclick=function(){state.name=document.getElementById('name').value||'Viko';state.personality=document.getElementById('personality').value;save();render();};
-var dl=document.getElementById('download');if(dl)dl.onclick=function(){var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='viko-project.json';a.click();};
-var ta=document.getElementById('toAnimate');if(ta)ta.onclick=function(){go('animate');};
-var play=document.getElementById('play');if(play)play.onclick=function(){play.textContent='▶ Preview Playing';setTimeout(function(){play.textContent='▶ Play Preview';},1800);};
-var rec=document.getElementById('record');if(rec)rec.onclick=function(){alert('Recording module next step में connect किया जाएगा।');};
+ document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
+ const saveBtn=document.getElementById('save');if(saveBtn)saveBtn.onclick=()=>{save();saveBtn.textContent='Saved ✓';setTimeout(()=>saveBtn.textContent='Save',1000)};
+ const create=document.getElementById('create');if(create)create.onclick=makeEpisode;
+ const gen=document.getElementById('generate');if(gen)gen.onclick=()=>{state.title=document.getElementById('title').value;state.idea=document.getElementById('idea').value;makeEpisode()};
+ const blank=document.getElementById('newBlank');if(blank)blank.onclick=()=>{state.scenes=[];save();render()};
+ const cs=document.getElementById('charSave');if(cs)cs.onclick=()=>{state.name=document.getElementById('name').value||'Viko';state.personality=document.getElementById('personality').value;save();render()};
+ document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>{active=+b.dataset.scene;render()});
+ const apply=document.getElementById('applyScene');if(apply)apply.onclick=()=>{const s=state.scenes[active];Object.assign(s,{title:document.getElementById('stitle').value,text:document.getElementById('stext').value,place:document.getElementById('splace').value,action:document.getElementById('saction').value,emotion:document.getElementById('semotion').value,duration:Math.max(2,+document.getElementById('sdur').value||6)});save();render()};
+ const del=document.getElementById('deleteScene');if(del)del.onclick=()=>{state.scenes.splice(active,1);active=Math.max(0,active-1);save();render()};
+ document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{active=+b.dataset.jump;render()});
+ const dl=document.getElementById('download');if(dl)dl.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));a.download='viko-new-journey-project.json';a.click()};
+ const pe=document.getElementById('playExport');if(pe)pe.onclick=()=>go('animate');
+ const play=document.getElementById('play');if(play)play.onclick=playEpisode;
+ const stop=document.getElementById('stop');if(stop)stop.onclick=()=>playing=false;
+ const rec=document.getElementById('record');if(rec)rec.onclick=recordEpisode;
 }
+function drawHero(id){const c=document.getElementById(id);if(!c)return;const x=c.getContext('2d'),w=c.width,h=c.height;x.clearRect(0,0,w,h);const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#5ab4ee');g.addColorStop(.55,'#d5f2ff');g.addColorStop(1,'#67a95b');x.fillStyle=g;x.fillRect(0,0,w,h);x.fillStyle='#f5d38b';x.beginPath();x.arc(w*.78,h*.2,48,0,7);x.fill();for(let i=0;i<8;i++){x.fillStyle=i%2?'#4d914f':'#39783f';x.beginPath();x.arc(50+i*95,h*.72-(i%3)*35,48,0,7);x.fill()}drawViko2D(x,w*.5,h*.64,Math.min(w,h)*.25);drawNubi2D(x,w*.73,h*.35,Math.min(w,h)*.1)}
+function drawViko2D(x,cx,cy,s){x.save();x.translate(cx,cy);x.fillStyle='#27334f';x.beginPath();x.roundRect(-s*.45,s*.35,s*.9,s*.75,s*.18);x.fill();x.fillStyle='#5b6ee1';x.beginPath();x.roundRect(-s*.5,-s*.35,s,s*.8,s*.22);x.fill();x.fillStyle='#f2b88a';x.beginPath();x.arc(0,-s*.78,s*.52,0,7);x.fill();x.fillStyle='#2b2036';x.beginPath();x.arc(0,-s*.98,s*.53,Math.PI,7);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(-s*.17,-s*.78,s*.09,0,7);x.arc(s*.17,-s*.78,s*.09,0,7);x.fill();x.fillStyle='#182033';x.beginPath();x.arc(-s*.17,-s*.78,s*.04,0,7);x.arc(s*.17,-s*.78,s*.04,0,7);x.fill();x.strokeStyle='#8a4052';x.lineWidth=4;x.beginPath();x.arc(0,-s*.67,s*.12,0,Math.PI);x.stroke();x.restore()}
+function drawNubi2D(x,cx,cy,s){x.save();x.translate(cx,cy);x.fillStyle='#7c5cff';x.beginPath();x.ellipse(0,0,s,s*.72,0,0,7);x.fill();x.fillStyle='#111827';x.beginPath();x.ellipse(0,0,s*.72,s*.45,0,0,7);x.fill();x.fillStyle='#22d3ee';x.beginPath();x.arc(-s*.25,0,s*.09,0,7);x.arc(s*.25,0,s*.09,0,7);x.fill();x.restore()}
+let playing=false,recorder=null,chunks=[];
+function playEpisode(){if(!state.scenes.length){alert('पहले Episode में Generate 6-Scene Episode दबाओ।');return}const start=performance.now(),durations=state.scenes.map(s=>(+s.duration||6)*1000),total=durations.reduce((a,b)=>a+b,0);playing=true;function tick(now){if(!playing)return;let e=now-start,acc=0,i=0;while(i<durations.length&&e>=acc+durations[i]){acc+=durations[i];i++}if(i>=state.scenes.length){playing=false;active=state.scenes.length-1;render();return}active=i;const p=(e-acc)/durations[i];const bar=document.getElementById('progress');if(bar)bar.style.width=((acc+(e-acc))/total*100)+'%';const tx=document.getElementById('sceneText');if(tx)tx.textContent='Scene '+(i+1)+' — '+state.scenes[i].title+' • '+state.scenes[i].text;requestAnimationFrame(tick)}requestAnimationFrame(tick)}
+function recordEpisode(){const c=document.getElementById('viko3dCanvas');if(!c||!c.captureStream){alert('इस browser में recording supported नहीं है।');return}if(!state.scenes.length){alert('पहले episode बनाओ।');return}const stream=c.captureStream(30);const type=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';chunks=[];recorder=new MediaRecorder(stream,{mimeType:type});recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data);recorder.onstop=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type}));a.download='viko-new-journey.webm';a.click()};recorder.start();playEpisode();setTimeout(()=>recorder&&recorder.state==='recording'&&recorder.stop(),state.scenes.reduce((a,s)=>a+(+s.duration||6),0)*1000+300)}
 load();render();
+window.vikoState=state;
 })();
 </script>
-
 <script type="module">
 (async()=>{
 try{
-const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-let R,S,C,H,N,W,animId=0,playing=false;
-const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.62,metalness:.05});
-const mesh=(g,geo,ma,p)=>{const q=new THREE.Mesh(geo,ma);q.position.set(...p);g.add(q);return q};
-function Viko(){
- const g=new THREE.Group(), skin=M(0xf2b88a), hair=M(0x2b2036), shirt=M(0x5b6ee1), pants=M(0x27334f), shoe=M(0x111827), white=M(0xffffff), eye=M(0x172033);
- const body=mesh(g,new THREE.CapsuleGeometry(.64,1.02,10,20),shirt,[0,1.65,0]); body.scale.z=.72;
- const head=mesh(g,new THREE.SphereGeometry(.72,32,24),skin,[0,3.02,0]); head.scale.set(1,.99,.9);
- const haircap=mesh(g,new THREE.SphereGeometry(.75,32,18),hair,[0,3.30,0]); haircap.scale.set(1,.55,.94);
- mesh(g,new THREE.BoxGeometry(.55,.12,.18),hair,[0,3.52,.2]);
- [-.24,.24].forEach(x=>{mesh(g,new THREE.SphereGeometry(.075,16,12),white,[x,3.08,.66]);mesh(g,new THREE.SphereGeometry(.038,12,10),eye,[x,3.08,.72]);});
- const smile=mesh(g,new THREE.TorusGeometry(.14,.025,8,20,Math.PI),M(0x8a4052),[0,2.82,.69]);smile.rotation.x=Math.PI;
- [-.36,.36].forEach(x=>{const a=mesh(g,new THREE.CapsuleGeometry(.13,.62,8,12),skin,[x,1.72,0]);a.rotation.z=x>0?-.42:.42;});
- [-.25,.25].forEach(x=>{mesh(g,new THREE.CapsuleGeometry(.18,.72,8,12),pants,[x,.7,0]);const sh=mesh(g,new THREE.SphereGeometry(.23,20,14),shoe,[x,.2,.2]);sh.scale.set(1,.55,1.35);});
- const badge=mesh(g,new THREE.CylinderGeometry(.16,.16,.035,32),M(0x22d3ee),[0,2.05,.5]);badge.rotation.x=Math.PI/2;
- return g;
-}
-function Nubi(){
- const g=new THREE.Group(),body=M(0x7c5cff),dark=M(0x101827),cyan=M(0x22d3ee),silver=M(0xdbeafe);
- mesh(g,new THREE.SphereGeometry(.43,28,20),body,[0,0,0]).scale.set(1.35,.82,.8);
- mesh(g,new THREE.SphereGeometry(.32,24,18),dark,[0,0,.33]).scale.set(1.1,.62,.25);
- [-.14,.14].forEach(x=>mesh(g,new THREE.SphereGeometry(.055,12,10),cyan,[x,.03,.43]));
- const stem=mesh(g,new THREE.CylinderGeometry(.025,.025,.2,10),silver,[0,.45,0]);
- mesh(g,new THREE.SphereGeometry(.06,12,10),cyan,[0,.58,0]);
- return g;
-}
-function World(kind){
- const g=new THREE.Group(), ground=M(0x172231);
- const floor=mesh(g,new THREE.PlaneGeometry(20,20),ground,[0,0,0]);floor.rotation.x=-Math.PI/2;
- if(kind==='bedroom'){S.background=new THREE.Color(0x22385b);mesh(g,new THREE.BoxGeometry(5,.65,2.2),M(0x566b98),[0,.38,-2.5]);mesh(g,new THREE.BoxGeometry(5,2.1,.18),M(0x3a4b6c),[0,1.35,-3.5]);mesh(g,new THREE.BoxGeometry(.9,1.8,.25),M(0xe5b87d),[-3,1,-3.2]);}
- if(kind==='street'){S.background=new THREE.Color(0x71818b);mesh(g,new THREE.BoxGeometry(18,.08,5),M(0x30343a),[0,.04,-1]);for(let x=-8;x<9;x+=2)mesh(g,new THREE.BoxGeometry(.9,.035,.09),M(0xf3f4f6),[x,.09,-1]);}
- if(kind==='kitchen'){S.background=new THREE.Color(0x715b4e);mesh(g,new THREE.BoxGeometry(7,.8,1.1),M(0x9a806b),[0,.8,-2.4]);mesh(g,new THREE.BoxGeometry(7,2.8,.2),M(0x5b493d),[0,2.1,-3]);mesh(g,new THREE.CylinderGeometry(.25,.25,.55,24),M(0xc8d2df),[1,1.5,-2.1]);}
- if(kind==='park'){S.background=new THREE.Color(0x477456);for(let x=-6;x<=6;x+=3){mesh(g,new THREE.CylinderGeometry(.12,.18,1.4,10),M(0x684b36),[x,.7,-2.5]);mesh(g,new THREE.SphereGeometry(.82,20,14),M(0x2f6840),[x,1.7,-2.5]);}mesh(g,new THREE.BoxGeometry(4,.12,.7),M(0x8b5e3c),[0,1,-1]);}
- return g;
-}
-const worlds=['bedroom','bedroom','street','kitchen','street','park'], acts=['jump','idle','walk','run','run','jump'];
-function scenes(){try{const x=JSON.parse(localStorage.getItem('vikoStudio2'));return Array.isArray(x?.scenes)?x.scenes:[]}catch(e){return[]}}
-function init(){
- const cv=document.getElementById('viko3dCanvas');if(!cv||R)return;
- cv.width=540;cv.height=720;
- R=new THREE.WebGLRenderer({canvas:cv,antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(540,720,false);
- S=new THREE.Scene();C=new THREE.PerspectiveCamera(32,540/720,.1,100);C.position.set(4.2,3.1,8);C.lookAt(0,1.8,0);
- S.add(new THREE.HemisphereLight(0xeaf5ff,0x101827,2.5));
- const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(4,8,6);S.add(key);
- const rim=new THREE.DirectionalLight(0x9ab7ff,1.5);rim.position.set(-5,4,-4);S.add(rim);
- H=Viko();N=Nubi();S.add(H,N);W=World('bedroom');S.add(W);
- const loop=()=>{if(!playing){const t=performance.now()/1000;H.position.y=Math.abs(Math.sin(t*2))*.045;H.rotation.y=Math.sin(t*.65)*.06;N.position.set(1.5,2.85+Math.sin(t*2.4)*.12,.1);R.render(S,C);}animId=requestAnimationFrame(loop)};loop();
-}
-function setScene(i,t){
- if(!R)init(); if(W)S.remove(W);W=World(worlds[i]||'bedroom');S.add(W);
- const a=acts[i]||'idle', speed=t*2;
- H.position.x=a==='walk'?Math.sin(speed)*1.0:a==='run'?Math.sin(speed*1.7)*1.25:0;
- H.position.y=a==='jump'?Math.abs(Math.sin(t*3))*1.0:Math.abs(Math.sin(t*3))*0.08;
- H.rotation.y=a==='run'?Math.sin(t*8)*.25:Math.sin(t*2)*.06;
- N.position.set(1.5,2.85+Math.sin(t*2.5)*.15,.1);
- C.position.x=4.2+Math.sin(t*.7)*.45;C.position.z=a==='run'?7.2:8;C.lookAt(0,1.8,0);R.render(S,C);
- const ss=scenes(), tx=document.getElementById('vikoSceneText'),bar=document.getElementById('vikoProgress');
- if(tx)tx.textContent='Scene '+(i+1)+' — '+(ss[i]?.title||'Viko Challenge')+' • '+(ss[i]?.text||'');
- if(bar)bar.style.width=((i+1)/Math.max(1,ss.length)*100)+'%';
-}
-function play(){
- const ss=scenes();if(!ss.length){alert('पहले Story में Generate 6 Scenes दबाओ।');return}init();playing=true;const start=performance.now(),dur=4000,total=dur*ss.length;
- const step=now=>{if(!playing)return;const e=now-start;if(e>=total){playing=false;setScene(ss.length-1,0);return}setScene(Math.floor(e/dur),(e%dur)/1000);animId=requestAnimationFrame(step)};animId=requestAnimationFrame(step);
-}
-function stop(){playing=false;if(animId)cancelAnimationFrame(animId);}
-function record(){
- const ss=scenes();if(!ss.length){alert('पहले Story में Generate 6 Scenes दबाओ।');return}init();stop();if(!R.domElement.captureStream){alert('इस browser में recording supported नहीं है।');return}
- const stream=R.domElement.captureStream(30),type=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm',chunks=[];
- const mr=new MediaRecorder(stream,{mimeType:type});mr.ondataavailable=e=>e.data.size&&chunks.push(e.data);mr.onstop=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(chunks,{type}));a.download='viko-3d-episode.webm';a.click()};mr.start();
- const start=performance.now(),dur=4000,total=dur*ss.length;const step=now=>{const e=now-start;if(e>=total){mr.stop();return}setScene(Math.floor(e/dur),(e%dur)/1000);requestAnimationFrame(step)};requestAnimationFrame(step);
-}
-const bind3d=()=>{const cv=document.getElementById('viko3dCanvas');if(!cv)return;init();[['play',play],['stop',stop],['record',record]].forEach(([id,fn])=>{const b=document.getElementById(id);if(b&&!b.dataset.v3d){b.dataset.v3d=1;b.onclick=fn;}})};
-new MutationObserver(bind3d).observe(document.getElementById('root'),{childList:true,subtree:true});bind3d();
-}catch(e){console.error('VIKO 3D engine',e)}})();
-</script></body>
-</html>
+const T=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
+let renderer,scene,camera,hero,nubi,world,lastCanvas;
+const M=c=>new T.MeshStandardMaterial({color:c,roughness:.7});
+function part(g,geo,m,p){const q=new T.Mesh(geo,m);q.position.set(...p);g.add(q);return q}
+function makeHero(){const g=new T.Group(),skin=M(0xf2b88a),hair=M(0x2b2036),shirt=M(0x5b6ee1),pants=M(0x27334f),shoe=M(0x111827),white=M(0xffffff),eye=M(0x182033);part(g,new T.CapsuleGeometry(.63,1.02,10,20),shirt,[0,1.65,0]).scale.z=.72;part(g,new T.SphereGeometry(.72,32,24),skin,[0,3.02,0]).scale.set(1,1,.9);part(g,new T.SphereGeometry(.75,32,18),hair,[0,3.31,0]).scale.set(1,.54,.94);[-.24,.24].forEach(x=>{part(g,new T.SphereGeometry(.08,16,12),white,[x,3.08,.66]);part(g,new T.SphereGeometry(.04,12,10),eye,[x,3.08,.72])});[-.36,.36].forEach(x=>{const a=part(g,new T.CapsuleGeometry(.13,.62,8,12),skin,[x,1.72,0]);a.rotation.z=x>0?-.4:.4});[-.25,.25].forEach(x=>{part(g,new T.CapsuleGeometry(.18,.72,8,12),pants,[x,.7,0]);part(g,new T.SphereGeometry(.23,20,14),shoe,[x,.2,.2]).scale.set(1,.55,1.35)});return g}
+function makeNubi(){const g=new T.Group();part(g,new T.SphereGeometry(.44,28,20),M(0x7c5cff),[0,0,0]).scale.set(1.35,.82,.8);part(g,new T.SphereGeometry(.32,24,18),M(0x101827),[0,0,.34]).scale.set(1.1,.62,.25);[-.14,.14].forEach(x=>part(g,new T.SphereGeometry(.055,12,10),M(0x22d3ee),[x,.03,.44]));return g}
+function world(kind){const g=new T.Group(),floor=part(g,new T.PlaneGeometry(20,20),M(0x172231),[0,0,0]);floor.rotation.x=-Math.PI/2;if(kind==='street'){scene.background=new T.Color(0x72a6c4);part(g,new T.BoxGeometry(18,.08,5),M(0x30343a),[0,.04,-1));for(let x=-8;x<9;x+=2)part(g,new T.BoxGeometry(.9,.04,.1),M(0xf2f2f2),[x,.09,-1])}if(kind==='bedroom'){scene.background=new T.Color(0x4b75a4);part(g,new T.BoxGeometry(5,.65,2.2),M(0x5b6f9b),[0,.38,-2.5]);part(g,new T.BoxGeometry(5,2,.18),M(0x394c6c),[0,1.35,-3.5])}if(kind==='school'){scene.background=new T.Color(0x6da0c6);part(g,new T.BoxGeometry(7,3,.4),M(0xc97848),[0,1.5,-3]);part(g,new T.BoxGeometry(3,1.1,.08),M(0x315477),[0,1.9,-2.75])}if(kind==='park'){scene.background=new T.Color(0x65a36b);for(let x=-6;x<=6;x+=3){part(g,new T.CylinderGeometry(.12,.18,1.5,10),M(0x684b36),[x,.75,-2.5]);part(g,new T.SphereGeometry(.82,20,14),M(0x2f6840),[x,1.7,-2.5])}}if(kind==='cave'){scene.background=new T.Color(0x17152a);part(g,new T.SphereGeometry(4,24,12),M(0x332b46),[0,2,-3]).scale.set(1,.7,.5);part(g,new T.CylinderGeometry(.5,.5,1.8,12),M(0x22d3ee),[0,.9,-2.5])}return g}
+function init(){const c=document.getElementById('viko3dCanvas');if(!c||renderer)return;if(c.width!==540)c.width=540;c.height=720;renderer=new T.WebGLRenderer({canvas:c,antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(540,720,false);scene=new T.Scene();camera=new T.PerspectiveCamera(32,540/720,.1,100);camera.position.set(4.2,3.1,8);camera.lookAt(0,1.8,0);scene.add(new T.HemisphereLight(0xeaf5ff,0x101827,2.4));const key=new T.DirectionalLight(0xffffff,3);key.position.set(4,8,6);scene.add(key);hero=makeHero();nubi=makeNubi();scene.add(hero,nubi);worldGroup('street');animate()}
+function worldGroup(k){if(world){scene.remove(world)}world=world(k);scene.add(world)}
+function animate(){const t=performance.now()/1000;if(hero){hero.position.y=Math.abs(Math.sin(t*2))*.05;hero.rotation.y=Math.sin(t*.7)*.06;nubi.position.set(1.5,2.85+Math.sin(t*2.4)*.12,.1);renderer.render(scene,camera)}requestAnimationFrame(animate)}
+function jumpTo(i,t=0){init();const s=(window.vikoState?.scenes||[])[i]||{};worldGroup(s.place||'street');const a=s.action||'idle';hero.position.x=a==='walk'?Math.sin(t*2)*1:a==='run'?Math.sin(t*3)*1.2:0;hero.position.y=a==='jump'?Math.abs(Math.sin(t*3))*1:Math.abs(Math.sin(t*3))*.06;hero.rotation.y=a==='run'?Math.sin(t*8)*.25:0;camera.position.x=4.2+Math.sin(t*.7)*.45;camera.position.z=a==='run'?7.2:8;camera.lookAt(0,1.8,0);renderer.render(scene,camera)}
+const observer=new MutationObserver(()=>{const c=document.getElementById('viko3dCanvas');if(c&&!lastCanvas){lastCanvas=c;init()}if(c&&window.vikoState?.scenes?.length){}});observer.observe(document.getElementById('root'),{childList:true,subtree:true});
+window.viko3DJump=jumpTo;
+}catch(e){console.error(e)}
+})();
+</script>
+</body></html>
