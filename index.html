@@ -195,15 +195,42 @@ function drawProductionOverlay(ctx){
 function play(start,count){stop();playing=true;const e=current(),end=Math.min(e.scenes.length,start+count),startAt=performance.now(),dur=e.scenes.slice(start,end).reduce((a,x)=>a+(x.duration||30),0)*1000;function tick(now){if(!playing)return;const elapsed=now-startAt;let acc=0,i=start;while(i<end&&elapsed>=acc+(e.scenes[i].duration||30)*1000){acc+=(e.scenes[i].duration||30)*1000;i++}if(i>=end){playing=false;setScene(end-1);return}if(i!==active)setScene(i);const meter=document.getElementById('meter');if(meter)meter.style.width=Math.min(100,elapsed/dur*100)+'%';requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 function stop(){playing=false;if(rec&&rec.state!=='inactive')rec.stop();if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
 async function recordRange(start,count,name){
- if(!engine?.captureCanvas?.captureStream){alert('इस browser में video capture उपलब्ध नहीं है।');return}
- stop();const canvas=engine.captureCanvas,stream=canvas.captureStream(30);
- const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';
- recChunks=[];rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});
- rec.ondataavailable=e=>e.data.size&&recChunks.push(e.data);
- rec.onstop=()=>{const blob=new Blob(recChunks,{type:mime});download(name+'.webm',blob,mime);const st=document.getElementById('status');if(st)st.textContent='✅ Video तैयार है — Download शुरू हो गया';};
- rec.start(1000); const e=current(), end=Math.min(e.scenes.length,start+count);
+ const st=document.getElementById('status');
+ if(!engine?.captureCanvas?.captureStream||typeof MediaRecorder==='undefined'){if(st)st.textContent='❌ इस browser में video recording support नहीं है।';return}
+ stop();
+ const canvas=engine.captureCanvas,stream=canvas.captureStream(30);
+ const types=['video/webm;codecs=vp8,opus','video/webm','video/mp4'];
+ let mime=types.find(x=>MediaRecorder.isTypeSupported(x));
+ if(!mime){if(st)st.textContent='❌ कोई supported video format नहीं मिला। Chrome update करके फिर try करो।';return}
+ try{
+  recChunks=[];
+  rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000});
+ }catch(e){
+  if(st)st.textContent='❌ Recorder शुरू नहीं हुआ: '+(e.message||'browser error');
+  return;
+ }
+ rec.onerror=e=>{if(st)st.textContent='❌ Video recording error आया। फिर से Short दबाओ।';console.error(e)};
+ rec.ondataavailable=e=>{if(e.data&&e.data.size)recChunks.push(e.data)};
+ rec.onstop=()=>{
+  if(!recChunks.length){if(st)st.textContent='❌ Video में कोई frames नहीं मिले।';return}
+  const blob=new Blob(recChunks,{type:mime});
+  const ext=mime.startsWith('video/mp4')?'mp4':'webm';
+  download(name+'.'+ext,blob,mime);
+  if(st)st.textContent='✅ Video तैयार है — Download शुरू हो गया';
+ };
+ const e=current(),end=Math.min(e.scenes.length,start+count);
  const total=e.scenes.slice(start,end).reduce((a,x)=>a+(x.duration||SCENE_SEC),0)*1000;
- play(start,count); setTimeout(()=>{if(rec&&rec.state!=='inactive'){playing=false;rec.stop()}},total+1200);
+ if(st)st.textContent='🔴 Recording… 0%';
+ rec.start(250);
+ setScene(start);
+ play(start,count);
+ const started=performance.now();
+ const watcher=setInterval(()=>{
+  if(!rec||rec.state==='inactive'){clearInterval(watcher);return}
+  const pct=Math.min(100,((performance.now()-started)/total)*100);
+  if(st)st.textContent='🔴 Recording… '+Math.round(pct)+'%';
+ },500);
+ setTimeout(()=>{clearInterval(watcher);if(rec&&rec.state!=='inactive'){playing=false;rec.requestData?.();setTimeout(()=>{if(rec&&rec.state!=='inactive')rec.stop()},300)}},total+500);
 }
 async function record(withMic){
  if(!engine?.captureCanvas?.captureStream){alert('इस browser में video capture उपलब्ध नहीं है।');return}
