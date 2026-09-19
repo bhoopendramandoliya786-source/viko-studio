@@ -220,7 +220,7 @@ function drawProductionOverlay(ctx){
 }
 function play(start,count){stop();playing=true;const e=current(),end=Math.min(e.scenes.length,start+count),startAt=performance.now(),dur=e.scenes.slice(start,end).reduce((a,x)=>a+(x.duration||30),0)*1000;function tick(now){if(!playing)return;const elapsed=now-startAt;let acc=0,i=start;while(i<end&&elapsed>=acc+(e.scenes[i].duration||30)*1000){acc+=(e.scenes[i].duration||30)*1000;i++}if(i>=end){playing=false;setScene(end-1);return}if(i!==active)setScene(i);const meter=document.getElementById('meter');if(meter)meter.style.width=Math.min(100,elapsed/dur*100)+'%';requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 function stop(){playing=false;if(rec&&rec.state!=='inactive')rec.stop();if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
-async async function record(withMic){
+async function record(withMic){
  if(!engine?.captureCanvas?.captureStream){alert('इस browser में video capture उपलब्ध नहीं है।');return}
  stop();const canvas=engine.captureCanvas;const stream=canvas.captureStream(30);
  if(withMic){try{micStream=await navigator.mediaDevices.getUserMedia({audio:true});micStream.getAudioTracks().forEach(t=>stream.addTrack(t))}catch{alert('Microphone permission नहीं मिली।');return}}
